@@ -1,5 +1,8 @@
 # vue-online-shop
-## 技术：Vue、Vue CLI、Vue Router、Vuex、Axios.
+## 技术：
+    + 前端：Vue、Vue CLI、Vue Router、Vuex、Axios.
+    + 后端：SSM（Spring、Spring Mvc、Mybatis）.
+    + 数据库： MySQL.
 ## 功能描述： 
     + 浏览商品
     + 选择商品
