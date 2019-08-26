@@ -1,16 +1,16 @@
 <template>
     <div id="collectedShop">
-        <ShopComponent></ShopComponent>
+        <shop-component :shops="shops"></shop-component>
     </div>
 </template>
 <script>
-import ShopComponent from '../ShopComponent.vue'
+import ShopComponent from '@/components/component/ShopComponent.vue'
 
 export default {
     name: "CollectedShop",
     data() {
         return {
-           
+           shops: [1]
         }
     },
     components: {

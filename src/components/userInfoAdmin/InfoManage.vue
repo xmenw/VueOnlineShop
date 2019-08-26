@@ -66,11 +66,11 @@ $color: #64a1d6;
 	  	transition: all .6s;
 	}
 	.fade-enter {
-		transform: translateX(-300px);
+		transform: translateX(-30px);
 	  	opacity: 1;
 	}
 	.fade-leave-to {
-		transform: translateX(600px);
+		transform: translateX(60px);
 	  	opacity: 0;
 	}
 }

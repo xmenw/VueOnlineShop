@@ -32,6 +32,7 @@ export default {
             isLogin: false,
             username: '',
             password: '',
+            to: '',
             baseUrl: process.env.BASE_URL
         }
     },
@@ -56,9 +57,10 @@ export default {
             .then((response) => {
                 this.isLogin = response.data > 0 ? true : false;
                 if(this.isLogin){
-                  location.href="/"
+                  location.href="/";
                 }else {
                   alert("账号密码错误。");
+                  
                 }
             })
             .catch((error) => {

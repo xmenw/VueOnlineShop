@@ -1,20 +1,23 @@
 <template>
     <div id="boughtShop">
-        <ShopComponent></ShopComponent>
+        <shop-component :shops="shops"></shop-component>
     </div>
 </template>
 <script>
-import ShopComponent from '../ShopComponent.vue'
+import ShopComponent from '@/components/component/ShopComponent.vue'
 
 export default {
     name: "BoughtShop",
     data() {
         return {
-           
+           shops: [1]
         }
     },
     components: {
         ShopComponent
+    },
+    created(){
+        console.log(this.$store);
     }
 }
 </script>

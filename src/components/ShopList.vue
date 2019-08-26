@@ -9,7 +9,7 @@
                     <li><a href="#">明星网红</a></li>
                     <li><a href="#">品牌特卖</a></li>
                     <div class="nz-top-right">
-                        <form action="#" method="get">
+                        <form method="get">
                             <div class="input">
                                 <input type="text" class="input" autocomplete="off" name=" search" placeholder="请输入要搜索的男装">
                             </div>
@@ -34,7 +34,7 @@
                 </div>
                 <div class="show">
                     <ul>
-                        <li v-for="(shop, i) in comShop" :key="i">
+                        <li v-for="(shop, i) in shops" :key="shop.id">
                             <div class="item">
                                 <router-link :to="'shopdetail/' + shop.id">
                                     <div class="item-top">
@@ -60,7 +60,7 @@
                                     </div>
                                     <div class="bot4">
                                         <span class="s1"></span>
-                                        <span class="s2" :class="shop.select ? 'selected' : 'select' " @click="shop.select = !shop.select"></span>
+                                        <span class="s2" :class="shop.select ? 'selected' : 'select' " @click="select(i)"></span>
                                     </div>
                                 </div>
                             </div>
@@ -83,16 +83,26 @@ export default {
         }
     },
     created() {
-        this.$axios.get(`api/queryShopsByPage/${this.begin}`)
-            .then((response) => {
-                this.shops = response.data;
-                this.$store.dispatch("arrData", response.data);
-                this.begin++;
-            })
-            .catch((error) => {
-                console.log(error);
-                throw new Error("获取数据失败!");
-            });
+        let shops = JSON.parse(localStorage.getItem('shops'))
+        if(shops && shops.length){
+            this.shops = shops
+        }else {
+            this.$axios.get(`api/queryShopsByPage/${this.begin}`)
+                .then((response) => {
+                    this.shops = response.data;
+                    this.shops.forEach(function(shop, index) {
+                        shop.select = false;
+                    });
+                    localStorage.setItem('shops', JSON.stringify(shops))
+                    this.$store.dispatch("arrData", response.data);
+                    this.begin++;
+                })
+                .catch((error) => {
+                    console.log(response)
+                    console.log(error);
+                    throw new Error("获取数据失败!");
+                });
+        }
         this.$axios.get(`api/queryShopsNum`)
             .then((response) => {
                 this.len = response.data;
@@ -101,22 +111,6 @@ export default {
                 console.log(error);
                 throw new Error("获取数据失败!");
             });
-    },
-    computed: {
-        comShop() {
-            this.shops.forEach(function(shop, index) {
-                shop.select = false;
-            });
-            return this.shops;
-        }
-    },
-    watch: {
-        'comShop': {
-            handler(val) {
-                console.log(val);
-            },
-            deep: true
-        }
     },
     methods: {
         queryByPrice(wd) {
@@ -129,6 +123,10 @@ export default {
                     console.log(error);
                     throw new Error("获取数据失败!");
                 });
+        },
+        select(i){
+            this.shops[i].select = !this.shops[i].select
+            this.shops = Object.assign({}, this.shops)
         }
     }
 }

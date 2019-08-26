@@ -80,6 +80,10 @@ export default new Router({
 		name: 'Admin',
 		component: resolve => require(['./components/admin/Admin.vue'], resolve)
 	}, {
+		path: '/account',
+		name: 'Account',
+		component: resolve => require(['./components/Account.vue'], resolve)
+	}, {
 		path: '*',
 		redirect: '/'
 	}]

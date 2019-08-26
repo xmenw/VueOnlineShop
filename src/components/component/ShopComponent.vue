@@ -1,7 +1,7 @@
 <template>
 	<div id="shopComponent">
 	    <div class="shopcar-bot4" style="margin-bottom:20px;" v-for="(shop, i) in shops" :key="i">
-	        <ul class="left">
+            <ul class="left">
 	            <li>
 	                <div class="shop1">
 	                    <input class="input" type="checkbox" name="checkbox" v-model="shop.selected">
@@ -107,7 +107,7 @@ export default {
     
     .shopcar-bot4 ul li {
         float: left;
-        line-height: s30px;
+        line-height: 30px;
     }
 
     .shopcar-bot4 .shop2 img {
@@ -178,7 +178,11 @@ export default {
 
     .shopcar-bot4 .right li {
         float: right;
-        margin-right: 25px;
+        margin-right: 40px;
+    }
+
+    .shopcar-bot4 .right li:nth(1) {
+        margin-right: 0px;
     }
 
     .shopcar-bot4 .shop7 .hid {
