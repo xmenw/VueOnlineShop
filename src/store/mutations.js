@@ -18,5 +18,10 @@ module.exports = {
 		arrData
 	}) {
 		state.buyShops = arrData;
+	},
+	updateArrSearch(state, {
+		arrData
+	}) {
+		state.arrSearch = arrData;
 	}
 }

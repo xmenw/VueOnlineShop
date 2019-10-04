@@ -8,7 +8,6 @@
                     <li>
                         <a href="##" target="_blank">女装</a> /
                         <router-link :to="{name: 'ShopList'}">男装</router-link> /
-                        <a href="##">内衣</a>
                     </li>
                     <li>
                         <a href="##">鞋靴</a> /
@@ -54,28 +53,9 @@
                     <web-carousel class="carousel"></web-carousel>
                     </div> <!-- 中下 -->
                             <div class="center-bot">
-                                <!-- 左 -->
-                                <div class="left">
-                                    <a href="##"><img src="/image/show2.jpg" id="img"></a>
-                                </div>
-                                <!-- 中 -->
-                                <div class="center">
-                                    <div class="center-top">
-                                        <a href="##"><img src="/image/show3.jpg"></a>
-                                    </div>
-                                    <div class="center-bot">
-                                        <a href="##"><img src="/image/show4.jpg"></a>
-                                    </div>
-                                </div>
-                                <!-- 右 -->
-                                <div class="right">
-                                    <div class="right-top">
-                                        <a href="##"><img src="/image/show5.jpg"></a>
-                                    </div>
-                                    <div class="right-bot">
-                                        <a href="##"><img src="/image/show6.jpg"></a>
-                                    </div>
-                                </div>
+                                <router-link :to="'shopdetail/' + shop.id" v-for="shop in searchShops" :key="shop.id" class="router">
+                                    <img :src="shop.pic" class="search-img">
+                                </router-link>
                             </div>
                 </div>
                 <!-- 右边展示区 -->
@@ -324,8 +304,18 @@ export default {
     name: 'Show',
     data(){
         return {
-
+            searchShops: []
         }
+    },
+    created(){
+        this.$axios.get(`/api/query5ShopsBySales`)
+        .then(({data})=>{
+            this.searchShops = data
+            console.log(this.searchShops)
+        })
+        .catch((err)=>{
+            console.log(err)
+        })
     },
     components: {
         WebCarousel
@@ -557,6 +547,27 @@ export default {
         box-shadow: 0 5px 5px black;
         border: 1px solid #6ac1d4;
         transition: transform 1s linear;
+    }
+
+    .center-bot .router {
+        float: left;
+        display: inline-block;
+        width: 220px;
+        height: 125px;
+        & img {
+            width: 100%;
+            height: 100%;
+        }
+        &:nth-of-type(1){
+            width: 250px;
+            height: 245px;
+        }
+        &::after{
+            content: '';
+            display: block;
+            clear: both;
+            overflow: hidden;
+        }
     }
 
     .show .show-center .center-top:hover .showa {

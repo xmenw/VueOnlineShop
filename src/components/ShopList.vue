@@ -30,8 +30,9 @@
             </div>
             <div class="nav-center">
                 <div class="center-top">
-                    <ul>
-                        <li><a href="#">综合排序</a></li>
+                    <ul @click="select" ref="names">
+                        <li class="active"><a href="#" class="pr">综合排序</a></li>
+                        <li><a class="pr" @click="queryAllShopsBySales">销量排序</a></li>
                         <li><a class="pr" @click="queryByPrice(1)">价格升序</a></li>
                         <li><a class="pr" @click="queryByPrice(2)">价格降序</a></li>
                     </ul>
@@ -49,7 +50,6 @@
                                 <div class="item-bot">
                                     <div class="bot1">
                                         <span class="span1">￥{{ shop.price }}</span>
-                                        <span class="span2">8635人付款</span>
                                     </div>
                                     <div class="bot2">
                                         <span>
@@ -65,6 +65,7 @@
                                     </div>
                                     <div class="bot4">
                                         <span class="s1"></span>
+                                        <span class="span2">{{shop.sales}}人付款</span>
                                     </div>
                                 </div>
                             </div>
@@ -95,7 +96,6 @@ export default {
                 let shopDomArr = document.querySelector('.show ul');
                 let lastShop = shopDomArr.lastChild.childNodes[0]
                 let interse = new IntersectionObserver(entries => {
-                    console.log(5131321, entries.length)
                     entries.forEach(async item => { 
                         if(item.isIntersecting){
                             try {
@@ -156,6 +156,18 @@ export default {
                     throw new Error("获取数据失败!");
                 });
         },
+        queryAllShopsBySales() {
+            this.$axios.get(`api/queryShopsBySales`)
+                .then((response) => {
+                    this.$store.dispatch("arrData", response.data);
+                    this.shops = response.data;
+                })
+                .catch((error) => {
+                    alert("获取数据失败！");
+                    console.log(error);
+                    throw new Error("获取数据失败!");
+                });
+        },
         searchShop(e){
             let val = e.target.value.trim()
             if(val){
@@ -184,6 +196,16 @@ export default {
                     console.log(error);
                     throw new Error("获取数据失败!");
                 });
+        },
+        select(e){
+            Array.from(this.$refs.names.children).forEach((li)=>{
+                li.classList.remove('active')
+            })
+            if(e.target.tagName === 'LI'){
+                e.target.classList.add('active')
+            }else if(e.target.parentNode.tagName === 'LI'){
+                e.target.parentNode.classList.add('active')
+            }
         }
     }
 }
@@ -319,11 +341,13 @@ export default {
                     &:hover {
                         background-color: #fff;
                     }
+                    &.active {
+                        background-color: #ffffff;
+                    }
 
                     a {
                         color: #000;
                         font-size: 14px;
-
                         &:hover {
                             color: #64a1d6;
                         }
@@ -496,6 +520,7 @@ export default {
 
                 .bot1 {
                     height: 22px;
+                    text-align: center;
                     font-size: 14px;
 
                     span {
@@ -577,11 +602,9 @@ export default {
                         cursor: pointer;
                     }
 
-                    .s2 {
+                    .span2 {
                         float: right;
                         display: inline-block;
-                        width: 20px;
-                        height: 20px;
                         margin-right: 10px;
                         cursor: pointer;
 

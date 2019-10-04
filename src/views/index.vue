@@ -107,6 +107,7 @@ export default {
                 let shops = this.shops.filter((shop)=>{
                     return shop.desc.indexOf(val) > -1;
                 })
+                this.$store.dispatch('arrSearch', JSON.stringify(shops))
                 this.searchShops = shops
                 this.isSearch = true
             }else {
@@ -119,7 +120,7 @@ export default {
             if(id){
                 this.$router.push('shopdetail/' + id)
             }
-        },
+        }
     }
 }
 </script>

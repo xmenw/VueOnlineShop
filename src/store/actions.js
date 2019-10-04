@@ -20,6 +20,13 @@ module.exports = {
 			arrData
 		});
 	},
+	arrSearch({
+		commit
+	}, arrData) {
+		commit("updateArrSearch", {
+			arrData
+		});
+	},
 	buyShops({
 		commit
 	}, arrData) {

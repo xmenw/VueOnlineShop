@@ -54,6 +54,7 @@
                                 <input type="text" name="num" v-model="num" hidden="hidden">
                                 <button class="shopcar" @click.prevent="insertShop">加入购物车</button>
                                 <button class="shopcar" @click.prevent="collectShop">收藏</button>
+                                <button class="shopcar" @click.prevent="buyShop">购买</button>
                             </form>
                         </div>
                     </div>
@@ -162,6 +163,14 @@ export default {
                     console.log(error);
                     throw new Error("获取数据失败！");
                 });
+        },
+        buyShop(){
+            this.shop.selected = true;
+            this.shop.count = this.num;
+            this.shop.totalPrice = this.shop.num * this.shop.price;
+            this.$store.dispatch("buyShops", JSON.stringify([this.shop]));
+            console.log(this.shop)
+            this.$router.push(`/account`);      
         }
     }
 }
@@ -398,7 +407,6 @@ export default {
 
     .cente .xinxi .list .button {
         position: relative;
-        left: 100px;
         top: 10px;
     }
 
@@ -409,7 +417,14 @@ export default {
         margin-left: 10px;
         border: none;
         outline: none;
+        color: #fff;
         background-color: #64a1f6;
+        &:nth-of-type(2) {
+            background-color: #00f;
+        }
+        &:nth-of-type(3) {
+            background-color: #43a047;
+        }
     }
 
     .introduce {

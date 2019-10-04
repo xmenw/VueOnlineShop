@@ -1,5 +1,6 @@
 module.exports = {
 	arrData: [],
 	arrComment: [],
-	arrUser: []
+	arrUser: [],
+	arrSearch: [],
 }
