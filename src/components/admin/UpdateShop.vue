@@ -3,12 +3,13 @@
         <form ref="form">
             <div>
             	<span class="name">原图片：</span>
-                <img :src="shop.pic" alt="商品图片"></img>
+                <img :src="shop.pic" alt="商品图片" />
                 <input type="text" name="id" v-model="shop.id" hidden>
             </div>
             <div>
                 <span class="name">商品照片：</span>
-                <input type="file" accept="image/png,image/gif,image/jpeg" name="image">
+                <input type="file" accept="image/png,image/gif,image/jpeg" name="image" :value="image">
+                <input type="text" name="pic" hidden>
             </div>
             <div>
             	<input type="text" name="username" autocomplete="off" value="aaa" hidden>
@@ -55,7 +56,7 @@ export default {
                 headers: { 'Content-Type': 'multipart/form-data' }
             };
             let param = new FormData(this.$refs.form);
-            this.$axios.post(`/api/updateShop`, param, config)
+            this.$axios.post(`api/updateShop`, param, config)
                 .then((response) => {
                     if (response.data > 0) {
                         alert("修改成功！");

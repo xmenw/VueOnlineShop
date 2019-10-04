@@ -2,13 +2,8 @@
     <div id="userInfo">
         <form ref="form">
             <div>
-                <span class="name">头像：</span>
-                <input type="file" accept="image/png,image/gif,image/jpeg" name="pic">
-                <input type="text" name="image" hidden>
-            </div>
-            <div>
                 <span class="name">昵称：</span>
-                <input type="text" name="name" autocomplete="off" v-model="name">
+                <input type="text" disabled="disabled" name="name" autocomplete="off" v-model="name">
             </div>
             <div>
                 <span class="name">真实姓名：</span>
@@ -32,7 +27,7 @@
                 <input type="text" name="home" autocomplete="off" v-model="home">
             </div>
             <div class="center">
-                <button class="button" @click.prevent="submit">提交</button>
+                <button class="button" @click.prevent="submit">{{ hasData ? '修改' : '提交'}}</button>
             </div>
         </form>
     </div>
@@ -42,22 +37,83 @@ export default {
     name: "UserInfo",
     data() {
         return {
+            id: 0,
             name: '',
-            pic: '',
             realname: '',
             sex: '',
             birthday: '',
             local: '',
-            home: ''
+            home: '',
+            hasData: false
+        }
+    },
+    beforeRouteEnter (to, from, next) {
+        let name = localStorage.getItem('user');
+        if(!name){
+            alert('请先登录');
+            next('/login')
+        }else {
+            next((vm)=>{
+                if(name){
+                    vm.name = name
+                    vm.$axios.get(`api/queryUserInfo/${name}`)
+                        .then(({data})=>{
+                            if(data.birthday){
+                                vm.hasData = true
+                                vm.id = data.id;
+                                vm.realname = data.realname;
+                                vm.sex = data.sex;
+                                vm.birthday = data.birthday;
+                                vm.local = data.local;
+                                vm.home = data.home;
+                            }
+                        })
+                        .catch((err)=>{
+                            alert("获取数据失败！");
+                            console.log(err)
+                        })
+                }
+            })
         }
     },
     methods: {
         submit() {
-            let config = {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            };
             let param = new FormData(this.$refs.form);
-            this.$axios.post(`api/insertUserInfo`, param, config)
+            param.append('name', this.name);
+            if(this.hasData){
+                this.update(param);
+            }else {
+                this.insert(param);
+            }
+        },
+        clearForm() {
+            let { name, realname, sex, birthday, local, home } = this;
+            name = '',
+            realname = '',
+            sex = '',
+            birthday = '',
+            local = '',
+            home = '';
+        },
+        update(param){
+            this.$axios.post(`api/updateUserInfo`, param)
+                .then((response) => {
+                    if(response.data > 0){
+                    	alert("更新成功！");
+                    	this.clearForm();
+                    }else {
+                    	alert("更新失败！");
+                    }
+                })
+                .catch((error) => {
+                    alert("获取数据失败");
+                    console.log(error);
+                    throw new Error("获取数据失败!");
+                });
+        },
+        insert(param){
+            console.log(param)
+            this.$axios.post(`api/insertUserInfo`, param)
                 .then((response) => {
                     if(response.data > 0){
                     	alert("添加成功！");
@@ -67,19 +123,10 @@ export default {
                     }
                 })
                 .catch((error) => {
+                    alert("获取数据失败");
                     console.log(error);
                     throw new Error("获取数据失败!");
                 });
-        },
-        clearForm() {
-            let { name, pic, realname, sex, birthday, local, home } = this;
-            name = '',
-            pic = '',
-            realname = '',
-            sex = '',
-            birthday = '',
-            local = '',
-            home = '';
         }
     }
 }

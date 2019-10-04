@@ -21,19 +21,9 @@
                         <a href="##">用品</a>
                     </li>
                     <li>
-                        <a href="##">家店</a> /
-                        <a href="##">数码</a> /
-                        <a href="##">手机</a>
-                    </li>
-                    <li>
                         <a href="##">美妆</a> /
                         <a href="##">洗护</a> /
                         <a href="##">保健品</a>
-                    </li>
-                    <li>
-                        <a href="##">珠宝</a> /
-                        <a href="##">眼睛</a> /
-                        <a href="##">手表</a>
                     </li>
                     <li>
                         <a href="##">运动</a> /
@@ -41,24 +31,9 @@
                         <a href="##">乐器</a>
                     </li>
                     <li>
-                        <a href="##">游戏</a> /
-                        <a href="##">动漫</a> /
-                        <a href="##">影视</a>
-                    </li>
-                    <li>
                         <a href="##">美食</a> /
                         <a href="##">生鲜</a> /
                         <a href="##">零食</a>
-                    </li>
-                    <li>
-                        <a href="##">鲜花</a> /
-                        <a href="##">宠物</a> /
-                        <a href="##">农资</a>
-                    </li>
-                    <li>
-                        <a href="##">房产</a> /
-                        <a href="##">装修</a> /
-                        <a href="##">建材</a>
                     </li>
                     <li>
                         <a href="##">家具</a> /
@@ -66,24 +41,9 @@
                         <a href="##">家纺</a>
                     </li>
                     <li>
-                        <a href="##">汽车</a> /
-                        <a href="##">二手车</a> /
-                        <a href="##">用品</a>
-                    </li>
-                    <li>
-                        <a href="##">办公</a> /
-                        <a href="##">DIY</a> /
-                        <a href="##">五金电子</a>
-                    </li>
-                    <li>
                         <a href="##">百货</a> /
                         <a href="##">餐厨</a> /
                         <a href="##">家庭保健</a>
-                    </li>
-                    <li>
-                        <a href="##">学习</a> /
-                        <a href="##">卡券</a> /
-                        <a href="##">本地服务</a>
                     </li>
                 </ul>
             </div>
@@ -91,23 +51,8 @@
             <div class="show-center">
                 <!-- 中上 -->
                 <div class="center-top">
-                    <div class="lbt">
-                        <a href="##"><img src="/image/show1.jpg"></a>
-                        <a href="##"><img src="/image/show3.jpg"></a>
-                        <a href="##"><img src="/image/show4.jpg"></a>
-                        <a href="##"><img src="/image/show5.jpg"></a>
-                        <a href="##"><img src="/image/show6.jpg"></a>
-                    </div>
-                    <div class="button">
-                        <strong class="on">1</strong>
-                        <strong>2</strong>
-                        <strong>3</strong>
-                        <strong>4</strong>
-                        <strong>5</strong>
-                    </div>
-                    <a href="##" class="right">></a>
-                    <a href="##" class="left">
-                        <</a> </div> <!-- 中下 -->
+                    <web-carousel class="carousel"></web-carousel>
+                    </div> <!-- 中下 -->
                             <div class="center-bot">
                                 <!-- 左 -->
                                 <div class="left">
@@ -143,18 +88,10 @@
                                 </a>
                                 <div class="code">
                                     <img src="/image/ewm.jpg">
-                                    <span>我的小屋</span>
+                                    <span>我的小店</span>
                                 </div>
                             </div>
                             <span id="hello">Hi! <em id="username">{{ user }}</em></span>
-                            <p class="p">
-                                <a href="##">
-                                    <span class="p-left">领金币抵钱</span>
-                                </a>
-                                <a href="##">
-                                    <span class="p-right">会员俱乐部</span>
-                                </a>
-                            </p>
                         </div>
                         <div class="bot">
                             <div class="bot-div">
@@ -163,19 +100,9 @@
                             </div>
                         </div>
                     </div>
-                    <!-- 举报 -->
-                    <div class="jubao">
-                        <a href="##">
-                            <span id="jb">网上有害信息举报专区</span>
-                        </a>
-                    </div>
                     <div class="notice">
                         <ul class="not">
-                            <li class="lli" style="border-bottom:2px solid #6ac1d4;">公告</li>
-                            <li class="lli">规则</li>
-                            <li class="lli">论坛</li>
-                            <li class="lli">安全</li>
-                            <li class="lli">公益</li>
+                            <li class="lli">公告</li>
                         </ul>
                         <div class="nr" style="display: inline-block;">
                             <ul class="nei-rong">
@@ -391,6 +318,8 @@
         </div>
 </template>
 <script>
+import WebCarousel from './component/WebCarousel'
+
 export default {
     name: 'Show',
     data(){
@@ -398,9 +327,12 @@ export default {
 
         }
     },
+    components: {
+        WebCarousel
+    },
     computed: {
         user(){
-            let user = sessionStorage.getItem("user");
+            let user = localStorage.getItem("user");
             return user ? user : "你好";
         }
     }
@@ -543,6 +475,11 @@ export default {
         overflow: hidden;
         margin-bottom: 2px;
         margin-left: 5px;
+    }
+
+    .center-top .carousel {
+        width: 100%;
+        height: 100%;
     }
 
     .show .show-center>.center-top .lbt {
@@ -731,6 +668,7 @@ export default {
     .show .show-right .login .top {
         width: 100%;
         height: 91px;
+        padding-top: 10px;
     }
     
     .show .show-right .login .top .tx {
@@ -870,11 +808,12 @@ export default {
     }
 
     .show .show-right .notice .not li {
-        float: left;
         cursor: pointer;
         line-height: 20px;
         text-align: center;
         margin: 0 10px;
+        padding-bottom: 5px;
+        border-bottom: 1px solid #6ac1d4;
     }
 
     .show .show-right .notice .not li a:hover {

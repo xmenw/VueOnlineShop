@@ -20,11 +20,6 @@
                                 <span>小店价</span>
                                 <span id="price">￥{{ shop.price }}</span>
                             </li>
-                            <li>
-                                <span>优惠</span>
-                                <span>5元店铺优惠券，满6元可用</span>
-                                <a href="#">领取</a>
-                            </li>
                         </ul>
                         <ul class="list-ul">
                             <li>
@@ -58,6 +53,7 @@
                                 <input type="text" name="color" v-model="shop.color" hidden="hidden">
                                 <input type="text" name="num" v-model="num" hidden="hidden">
                                 <button class="shopcar" @click.prevent="insertShop">加入购物车</button>
+                                <button class="shopcar" @click.prevent="collectShop">收藏</button>
                             </form>
                         </div>
                     </div>
@@ -65,8 +61,8 @@
             </div>
             <div class="introduce">
                 <ul class="ul">
-                    <router-link tag="li" :to="{name: 'Comment', params: {id: shop.id}}">商品评论</router-link>
-                    <router-link tag="li" :to="{name: 'Detail', params: {id: shop.id}}">宝贝详情</router-link>
+                    <router-link tag="li" active-class="active" :to="{name: 'Comment', params: {id: shop.id}}">商品评论</router-link>
+                    <router-link tag="li" active-class="active" :to="{name: 'Detail', params: {id: shop.id}}">宝贝详情</router-link>
                 </ul>
             </div>
         </div>
@@ -119,6 +115,7 @@ export default {
                     }
                 })
                 .catch((error) => {
+                    alert("获取数据失败！");
                     console.log(error);
                     throw new Error("获取数据失败！");
                 });
@@ -129,11 +126,12 @@ export default {
                     this.shop = response.data;
                 })
                 .catch((error) => {
+                    alert("获取数据失败！");
                     console.log(error);
                 });
         },
         disNum() {
-            if (this.num <= 0) {
+            if (this.num <= 1) {
                 return;
             }
             this.num--;
@@ -143,12 +141,34 @@ export default {
                 return;
             }
             this.num++;
+        },
+        collectShop(){
+            let { shop, num } = this;
+            let { id } = this.$route.params;
+            let param = new URLSearchParams();
+            param.append("id", shop.id);
+            param.append("shop_id", shop.id);
+            param.append("username", shop.username);
+            this.$axios.post(`../api/insertCollect`, param)
+                .then((response) => {
+                    if (response.data > 0) {
+                        alert("收藏成功！");
+                    } else {
+                        alert("收藏失败!");
+                    }
+                })
+                .catch((error) => {
+                    alert("获取数据失败！");
+                    console.log(error);
+                    throw new Error("获取数据失败！");
+                });
         }
     }
 }
 </script>
 <style lang="scss" scoped>
 .shopDeatil {
+    margin-top: 30px;
     .nz-top {
         width: 1000px;
         height: 65px;
@@ -347,6 +367,7 @@ export default {
         width: 100%;
         height: 30px;
         font-size: 14px;
+        user-select: none;
     }
 
     .cente .xinxi .list .cnt span:nth-child(1) {
@@ -415,11 +436,10 @@ export default {
         height: 30px;
         border-right: 1px solid #00f;
         background-color: #64a1d6;
-    }
-
-    .introduce .ul li:nth-child(1) {
-        background-color: #fff;
-        border-top: 2px solid #34a1d6;
+        &.active {
+            background-color: #fff;
+            border-top: 2px solid #34a1d6;
+        }
     }
 }
 </style>

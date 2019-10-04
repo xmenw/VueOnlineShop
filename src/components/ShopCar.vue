@@ -15,12 +15,12 @@
                         </ul>
                     </div>
                 </div>
-                <div class="shopcar-bot4" style="margin-bottom:20px;">
-                    <shop-component :shops="shops"></shop-component>
+                <div class="shopcar-bot4" style="margin-bottom:20px;" @click="select">
+                    <shop-component :shops.sync="shops" :path="path"></shop-component>
                 </div>
                 <ul class="pagination">
                     <li>
-                        <button @click="queryShopByPage(j - 2)" id="prev">&laquo;</button>
+                        <button @click="queryShopByPage(begin - 1)" id="prev">&laquo;</button>
                     </li>
                     <li v-for="j in pageCount" :key="j">
                         <button :class="(j - 1)==begin?'active' : ''" @click="queryShopByPage(j - 1)">
@@ -28,13 +28,13 @@
                         </button>
                     </li>
                     <li>
-                        <button @click="queryShopByPage(j)" id="next">&raquo;</button>
+                        <button @click="queryShopByPage(begin + 1)" id="next">&raquo;</button>
                     </li>
                 </ul>
                 <div class="shopcar-bot5">
                     <ul class="right">
                         <li class="bill">
-                            <router-link :to="{name: 'Account'}">结算</router-link>
+                            <button @click="account">结算</button>
                         </li>
                         <li>合计（不含运费）<input type="text" class="nu" v-model="selectPrice"></input></li>
                         <li>已选商品<input type="text" class="nu" v-model="selectNum"></input> 件</li>
@@ -52,10 +52,9 @@ export default {
         return {
             shops: [],
             pageCount: 0,
-            index: 0,
             begin: 0,
-            select: false, //全选
             selectPrice: 0.0,
+            path: 'deleteById',
             selectNum: 0
         }
     },
@@ -67,7 +66,7 @@ export default {
         this.queryCount();
     },
     beforeRouteEnter: (to, from, next) => {
-        if (!sessionStorage.getItem("user")) {
+        if (!localStorage.getItem("user")) {
             let login = confirm("登录后，才能进入购物车。");
             if (login) {
                 next("/login");
@@ -76,19 +75,13 @@ export default {
             next();
         }
     },
-    computed: {
-        selectShop() {
-            this.shops.filter((item) => {
-                return item.selected;
-            });
-            return this.shops;
-        }
-    },
     methods: {
         queryShopByPage(begin) {
-            begin = begin >= 2 ? begin - 2 : begin;
-            this.begin = begin;
-            this.$axios.get(`/api/queryPage/${begin}`)
+            this.begin = begin < 0 ? 0 : begin
+            if(begin > (this.shops.length / 5)){
+                this.begin = Math.floor(this.shops.length / 5)
+            }
+            this.$axios.get(`/api/queryPage/${this.begin}`)
                 .then((response) => {
                     this.shops = response.data;
                     let { shops } = this;
@@ -99,6 +92,7 @@ export default {
                     }
                 })
                 .catch((error) => {
+                    alert('获取数据失败')
                     console.log(error);
                 });
         },
@@ -108,19 +102,7 @@ export default {
                     this.pageCount = response.data;
                 })
                 .catch((error) => {
-                    console.log(error);
-                });
-        },
-        deleteById(id) {
-            this.$axios.get(`/api/deleteById/${id}`)
-                .then(({ data }) => {
-                    console.log(data);
-                    if (data === 1) {
-                        this.queryShopByPage(this.begin);
-                        this.queryCount();
-                    }
-                })
-                .catch((error) => {
+                    alert('获取数据失败')
                     console.log(error);
                 });
         },
@@ -129,6 +111,44 @@ export default {
             for (var i = 0, len = shops.length; i < len; i++) {
                 shops[i].selected = !select;
             }
+        },
+        account(){
+            let arrShops = [];
+            arrShops = this.shops.filter(element => {
+                return element.selected;
+            });
+            arrShops.forEach(({id, username})=>{
+                let param = new URLSearchParams();
+                param.append("id", id);
+                param.append("shop_id", id);
+                param.append("username", username);
+                this.$axios.post(`../api/insertBuy`, param)
+                .then((res)=>{
+                    console.log(res);
+                    console.log('购买成功');
+                }).catch((err)=>{
+                    alert('获取数据失败');
+                    console.log(err);
+                })
+            })
+            arrShops = JSON.stringify(arrShops);
+            this.$store.dispatch("buyShops", arrShops);
+            this.$router.push(`/account`);
+        },
+        select(){
+            setTimeout(() => {
+                let arrSelectShops = this.shops.filter((shop)=>{
+                    return shop.selected;
+                })
+                console.log(arrSelectShops)
+                this.selectNum = arrSelectShops.reduce((num, val)=>{
+                    return num + val.num;
+                }, 0);
+                console.log(this.selectNum)
+                this.selectPrice = arrSelectShops.reduce((price, val)=>{
+                    return price + val.price * val.num;
+                }, 0);
+            }, 0);
         }
     }
 }
@@ -303,7 +323,7 @@ export default {
         margin-right: 20px;
     }
 
-    .shopcar-bot5 .right li a {
+    .shopcar-bot5 .right li button {
         display: inline-block;
         text-align: center;
         background-color: #64a1d6;
@@ -319,16 +339,8 @@ export default {
         font-size: 12px;
     }
 
-    .shopcar-bot1 .ul li:nth-child(2n-1):hover {
-        border-bottom: 2px solid #6ac1d4;
-    }
-
     .shopcar-bot1 .ul li .cur:hover {
         cursor: not-allowed;
-    }
-
-    .shopcar-bot1 .ul li:nth-child(1) {
-        border-bottom: 2px solid #6ac1d4;
     }
 
     .shopcar-bot1 .ul li:nth-child(2n-1) a {

@@ -1,12 +1,12 @@
 <template>
 	<div id="infoManage">
-		<ul class="items">
+		<ul class="items" @click="select">
 			<router-link  
-				v-for="item in routers" :key="item.path"
+				v-for="(item, i) in routers" :key="item.path"
 				tag='li' 
+				:data-i="i"
 				:to="{name: item.path}"  
-				:class="item.selected ? 'active' : ''"
-				@click="item.selected = !item.selected">
+				:class="item.selected ? 'active' : ''">
 				{{ item.name }}
 			</router-link>
 		</ul>
@@ -36,6 +36,24 @@
 					selected: false
 				}]
 			}
+		},
+		created(){
+			let routePath = this.$route.name;
+			this.routers.forEach((route)=>{
+				route.selected = false;
+				if(route.path === routePath){
+					route.selected = true
+				}
+			})
+		},
+		methods: {
+			select(e){
+				let index = e.target.getAttribute('data-i');
+				for(let i = 0; i < this.routers.length; i ++){
+					this.routers[i].selected = false;
+				}
+				this.routers[index].selected = true;	
+			}
 		}
 	}
 </script>
@@ -54,6 +72,7 @@ $color: #64a1d6;
 			font-size: 14px;
 			text-align: center;
 			background-color: $color;
+			border-bottom: 1px solid brown;
 			color: #fff;
 			cursor: pointer;
 		}

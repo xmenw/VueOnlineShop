@@ -5,7 +5,7 @@
 	            <li>
 	                <div class="shop1">
 	                    <input class="input" type="checkbox" name="checkbox" v-model="shop.selected">
-	                </div>
+                    </div>
 	            </li>
 	            <li>
 	                <router-link :to="'shopdetail/' + shop.id">
@@ -27,7 +27,7 @@
 	                <div class="shop7">
 	                    <ul class="ul">
 	                        <li>
-	                            <button @click="deleteById(shop._id)">
+	                            <button @click="deleteById(shop._id  || shop.id)">
 	                                删除
 	                            </button>
 	                        </li>
@@ -45,7 +45,7 @@
 	            </li>
 	            <li>
 	                <div class="shop5">
-	                    <span class="dis" @click="shop.count <= 1 ? 1 : shop.count --">-</span>
+	                    <span class="dis" @click="shop.count <= 1 ? 1 : shop.num --">-</span>
 	                    <input type="text" name="num" style="text-align: center;" v-model="shop.count">
 	                    <span class="add" @click="shop.count >= shop.num ? shop.num : shop.count ++">+</span>
 	                </div>
@@ -62,25 +62,88 @@
 <script>
 export default {
     name: 'ShopComponent',
-    data(){
-    	return {
-    		shops: []
-    	}
+    props: {
+    	shops: {
+            type: Array,
+            required: true,
+            dafault(){
+                return []
+            }
+        },
+        path: {
+            type: String,
+            required: true
+        }
     },
-    created(){
-    	this.$axios.get(`/api/queryPage/0`)
-            .then((response) => {
-                this.shops = response.data;
-                let { shops } = this;
-                for (var i = 0, len = shops.length; i < len; i++) {
-                    shops[i].totalPrice = shops[i].num * shops[i].price;
-                    shops[i].count = shops[i].num;
-                    shops[i].selected = false;
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+    methods: {
+        deleteById(id) {
+            // shopcar deleteById
+            // collecte deleteCollectById
+            // buy deleteBoughtById
+            this.$axios.get(`/api/${this.path}/${id}`)
+                .then(({ data }) => {
+                    console.log(data);
+                    if (data === 1) {
+                        alert('删除成功');
+                        this.queryShop(this.path);
+                    }else {
+                        alert('删除失败');
+                    }
+                })
+                .catch((error) => {
+                    alert('发送数据失败');
+                    console.log(error);
+                });
+        },
+        queryShop(path){
+            switch (path) {
+                case 'deleteById':
+                    this.queryShopCar();
+                    break;
+                case 'deleteCollectById':
+                    this.queryCollect(1)
+                    break;
+                case 'deleteBoughtById':
+                    this.queryCollect(0)
+                    break;
+                default:
+                    break;
+            }
+        },
+        queryShopCar(){
+            this.$axios.get(`/api/queryPage/0`)
+                .then((response) => {
+                    this.shops = response.data;
+                    let { shops } = this;
+                    for (var i = 0, len = shops.length; i < len; i++) {
+                        shops[i].totalPrice = shops[i].num * shops[i].price;
+                        shops[i].count = shops[i].num;
+                        shops[i].selected = false;
+                    }
+                })
+                .catch((error) => {
+                    alert('获取数据失败')
+                    console.log(error);
+                });
+        },
+        queryCollect(type){
+            let path = type ? 'queryAllCollect' : 'queryAllBuy' 
+            this.$axios.get(`/api/${path}`)
+                .then((response) => {
+                    console.log(response)
+                    this.shops = response.data;
+                    let { shops } = this;
+                    for (var i = 0, len = shops.length; i < len; i++) {
+                        shops[i].totalPrice = shops[i].num * shops[i].price;
+                        shops[i].count = 1;
+                        shops[i].selected = false;
+                    }
+                })
+                .catch((error) => {
+                    alert("获取数据失败！");
+                    console.log(error);
+                });
+        }
     }
 }
 </script>
@@ -157,6 +220,11 @@ export default {
     .shopcar-bot4 .shop5 input {
         width: 25px;
     }
+    .shop5 .dis,
+    .shop5 .add {
+        user-select: none;
+        cursor: pointer;
+    }
 
     a {
         color: #000;
@@ -178,10 +246,10 @@ export default {
 
     .shopcar-bot4 .right li {
         float: right;
-        margin-right: 40px;
+        margin-right: 30px;
     }
 
-    .shopcar-bot4 .right li:nth(1) {
+    .shopcar-bot4 .right li:nth-child(1) {
         margin-right: 0px;
     }
 
@@ -226,16 +294,9 @@ export default {
         font-size: 12px;
     }
 
-    .ul li:nth-child(2n-1):hover {
-        border-bottom: 2px solid #6ac1d4;
-    }
 
     .ul li .cur:hover {
         cursor: not-allowed;
-    }
-
-    .ul li:nth-child(1) {
-        border-bottom: 2px solid #6ac1d4;
     }
 
     .ul li:nth-child(2n-1) a {

@@ -59,7 +59,7 @@
 			}
 		},
 		beforeRouteEnter: (to,from,next)=>{
-        if(sessionStorage.getItem("user") != "aaa"){
+        if(localStorage.getItem("user") != "aaa"){
             next("login");
         }else {
             next();

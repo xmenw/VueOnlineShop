@@ -59,16 +59,16 @@ export default {
                 if(this.isLogin){
                   location.href="/";
                 }else {
-                  alert("账号密码错误。");
-                  
+                  alert("账号密码错误。"); 
                 }
             })
             .catch((error) => {
+                alert('获取数据失败')
                 console.log(error);
             });
         },
         userChange() {
-            sessionStorage.setItem("user", this.username);
+            localStorage.setItem("user", this.username);
         }
     }
 }

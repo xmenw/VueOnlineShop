@@ -3,9 +3,7 @@
         <div class="cover">
             <ul class="cover-left">
                 <li>中国大陆</li>
-                <li>维护利益</li>
                 <li>手机</li>
-                <li>联系客服</li>
             </ul>
             <ul class="right">
                 <li v-for="nav in navs" :key="nav.path">
@@ -26,40 +24,26 @@
                 </div>
                 <!-- 搜索框 -->
                 <div class="search">
-                    <div class="search-top">
-                        <ul class="top">
-                            <li class="top-left"><a href="##">宝贝</a></li>
-                            <li class="top-right"><a href="##">店铺</a></li>
-                        </ul>
-                    </div>
                     <div class="search-input">
-                        <form action="##" method="get">
+                        <form method="get">
                             <div class="input">
-                                <input type="text" name="search" id="search" autocomplete="off" placeholder="请输入要搜索的宝贝">
+                                <input type="text" name="search" 
+                                    id="search" autocomplete="off" placeholder="请输入要搜索的宝贝"
+                                    @input="search"    
+                                >
                             </div>
                             <div class="button">
-                                <button type="submit">搜索</button>
+                                <button @click.prevent="" type="submit">搜索</button>
                             </div>
                         </form>
-                    </div>
-                    <div class="search-bot">
-                        <ul class="b">
-                            <li><a href="##">背心</a></li>
-                            <li><a href="##">新款连衣裙</a></li>
-                            <li class="t"><a href="##">潮流T恤</a></li>
-                            <li><a href="##">时尚女鞋</a></li>
-                            <li><a href="##">短裤</a></li>
-                            <li><a href="##">半身裙</a></li>
-                            <li><a href="##">男士外套</a></li>
-                            <li><a href="##">墙纸</a></li>
-                            <li><a href="##">行车记录仪</a></li>
-                            <li><a href="##">新款男鞋</a></li>
-                            <li><a href="##">耳机</a></li>
-                            <li class="more"><a href="##">更多 ></a></li>
-                        </ul>
-                    </div>
-                    <div class="showresult">
-                        <ul class="results" id="results">
+                        <ul class="result"
+                         v-show="isSearch"
+                         @click="ShopDetail"
+                         @mouseleave="isSearch = false"
+                        >
+                            <li class="list" v-for="list in searchShops" :key="list.id" :data-id="list.id">
+                                {{ list.desc }}
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -70,14 +54,6 @@
             <div class="center">
                 <ul class="nav">
                     <li class="mall">主题市场</li>
-                    <li><a href="##">抢购</a></li>
-                    <li><a href="##">电器城</a></li>
-                    <li><a href="##">司法拍卖</a></li>
-                    <li class="fgf">|</li>
-                    <li><a href="##">中国质造</a></li>
-                    <li><a href="##">兴农扶贫</a></li>
-                    <li><a href="##">智能生活</a></li>
-                    <li><a href="##">我的小屋</a></li>
                 </ul>
             </div>
         </div>
@@ -101,30 +77,74 @@ export default {
             }, {
                 path: "UserInfo",
                 name: "个人资料"
-            }]
+            }],
+            shops: [],
+            searchShops: [],
+            isSearch: false
         };
     },
     computed: {
       isLogin(){
-        return sessionStorage.getItem("user") === "aaa";
+        return localStorage.getItem("user") === "aaa";
       }
+    },
+    async created(){
+        try {
+            let {data} = await this.queryShops();
+            this.shops = data;
+        } catch (error) {
+            this.shops = [];
+            console.log(error);
+        }
+    },
+    methods: {
+        queryShops(){
+            return this.$axios.get(`api/queryAllShops`)
+        },
+        search(e){
+            let val = e.target.value.trim()
+            if(val){
+                let shops = this.shops.filter((shop)=>{
+                    return shop.desc.indexOf(val) > -1;
+                })
+                this.searchShops = shops
+                this.isSearch = true
+            }else {
+                this.isSearch = false
+            }
+        },
+        ShopDetail(e){
+            this.isSearch = false
+            let id = e.target.getAttribute('data-id');
+            if(id){
+                this.$router.push('shopdetail/' + id)
+            }
+        },
     }
 }
 </script>
 <style lang="scss" scoped>
 #header {
     .cover {
-        margin: 0 auto;
         width: 1190px;
         height: 35px;
-        background: #f5f5f5;
+        margin: 0 auto;
+        padding-left: 10px;
         line-height: 35px;
         font-size: 12px;
+        color: #ffffff;
+        background: #6ac1d4;
     }
 
     .right li {
         float: right;
         margin-right: 20px;
+        a {
+            color: #ffffff;
+            &:hover {
+                color: #000000;
+            }
+        }
     }
 
     .cover .cover-left li {
@@ -176,7 +196,7 @@ export default {
     }
 
     .cover li a:hover {
-        color: #6ac1d4;
+        color: #000000;
     }
 
     .head {
@@ -282,6 +302,27 @@ export default {
 
     .search .search-input input {
         text-indent: 1em;
+    }
+
+    .search-input .result {
+        position: relative;
+        width: 461px;
+        z-index: 10;
+        background-color: #fff;
+        user-select: none;
+        .list {
+            height: 30px;
+            width: 100%;
+            margin: 3px 0;
+            line-height: 30px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            &:hover {
+                cursor: pointer;
+                background-color: #64a1d6;
+            }
+        }
     }
 
     .head .wrape .search .search-input input {

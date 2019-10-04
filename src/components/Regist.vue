@@ -59,6 +59,7 @@ export default {
                 }
             })
             .catch((error) => {
+                alert('获取数据失败')
                 console.log(error);
             });
         }

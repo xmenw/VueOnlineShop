@@ -19,5 +19,12 @@ module.exports = {
 		commit("updateArrUser", {
 			arrData
 		});
+	},
+	buyShops({
+		commit
+	}, arrData) {
+		commit("updateBuyShops", {
+			arrData
+		});
 	}
 }

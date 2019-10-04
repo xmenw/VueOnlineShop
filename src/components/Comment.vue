@@ -1,6 +1,7 @@
 <template>
     <div id="comment">
-        <form action="/api/insertComment" method="POST" class="form">
+        <form ref="form" method="POST" class="form">
+            <input type="text" name="id" id="text" hidden v-model="shopId">
             <textarea name="comment" class="comInput" maxlength="100" v-model="comment"
             placeholder="在这里输入您的评价（不能超过100字" /></textarea>
             <button class="btn" @click.prevent="commit">发送</button>
@@ -19,32 +20,61 @@
     </div>
 </template>
 <script>
+import { setTimeout } from 'timers';
 export default {
     name: "Comment",
     data() {
         return {
-        	comments:[],
+            comments:[],
+            shopId: 0, // 商品id
         	comment: '', // 评论
         	fontNum: 0 //字数
         }
     },
     created(){
         let { id } = this.$route.params;
-        console.log(id);
-    	this.$axios.get(`/api/queryComment/${id}`)
+        this.shopId = id;
+    	this.queryById(id);
+    },
+    methods: {
+        async commit() {
+            this.comment = this.comment.trim().replace(/</gi, "&lt;");
+            this.comment = this.comment.trim().replace(/>/gi, "&gt;");
+            if(!this.comment){
+                alert("提交不能为空");
+                return;
+            }
+            await this.insertComment();
+            await this.queryById(this.shopId);
+            await this.queryById(this.shopId);
+        },
+        queryById(id){
+            this.$axios.get(`/api/queryComment/${id}`)
             .then((response) => {
                 this.comments = response.data;
+                this.comment = "";
+                this.fontNum = 0;
             })
             .catch((error) => {
                 console.log(error);
             });
-    },
-    methods: {
-        commit() {
-            this.comment = this.comment.trim().replace(/</gi, "&lt;");
-            this.comment = this.comment.trim().replace(/>/gi, "&gt;");
-            this.comment = "";
-            this.fontNum = 0;
+        },
+        insertComment(){
+            let param = new URLSearchParams();
+            param.append("id", this.shopId);
+            param.append("comment", this.comment);
+            this.$axios.post(`/api/insertComment`, param)
+            .then((response) => {
+                if(response.data === 1){
+                    this.comment = "";
+                    this.fontNum = 0;
+                }else {
+                    alert('提交失败');
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
         }
     }
 }

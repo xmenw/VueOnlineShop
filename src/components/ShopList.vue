@@ -3,30 +3,35 @@
         <div class="nz">
             <div class="navg">
                 <ul class="nav">
-                    <li><a href="/index">首页</a></li>
-                    <li><a href="#">原创设计</a></li>
-                    <li><a href="#">风格馆</a></li>
-                    <li><a href="#">明星网红</a></li>
-                    <li><a href="#">品牌特卖</a></li>
                     <div class="nz-top-right">
                         <form method="get">
                             <div class="input">
-                                <input type="text" class="input" autocomplete="off" name=" search" placeholder="请输入要搜索的男装">
-                            </div>
-                            <div class="button">
-                                <button type="submit">搜索</button>
+                                <input type="text" class="input" 
+                                       autocomplete="off" name=" search" 
+                                       placeholder="请输入要搜索的男装"
+                                       @input="searchShop"
+                                       @focus="isFocus = true"
+                                >
+                                <button @click.prevent type="submit">搜索</button>
                             </div>
                         </form>
-                        <ul class="result"></ul>
+                        <ul class="result"
+                            @click="ShopDetail"
+                            v-show="isFocus"
+                            @mouseenter="isFocus = true"
+                            @mouseleave="isFocus = false"
+                        >
+                            <li class="list" v-for="list in searchShops" :key="list.id" :data-id="list.id">
+                                {{ list.desc }}
+                            </li>
+                        </ul>
                     </div>
                 </ul>
             </div>
             <div class="nav-center">
                 <div class="center-top">
                     <ul>
-                        <li style="background-color: #fff;"><a href="#">综合排序</a></li>
-                        <li><a href="#">人气</a></li>
-                        <li><a href="#">销量</a></li>
+                        <li><a href="#">综合排序</a></li>
                         <li><a class="pr" @click="queryByPrice(1)">价格升序</a></li>
                         <li><a class="pr" @click="queryByPrice(2)">价格降序</a></li>
                     </ul>
@@ -34,7 +39,7 @@
                 </div>
                 <div class="show">
                     <ul>
-                        <li v-for="(shop, i) in shops" :key="shop.id">
+                        <li v-for="shop in shops" :key="shop.id">
                             <div class="item">
                                 <router-link :to="'shopdetail/' + shop.id">
                                     <div class="item-top">
@@ -60,13 +65,13 @@
                                     </div>
                                     <div class="bot4">
                                         <span class="s1"></span>
-                                        <span class="s2" :class="shop.select ? 'selected' : 'select' " @click="select(i)"></span>
                                     </div>
                                 </div>
                             </div>
                         </li>
                     </ul>
                 </div>
+                <div class="bottom">已经没有更多商品了</div>
             </div>
         </div>
     </div>
@@ -79,38 +84,64 @@ export default {
             shops: [],
             begin: 1,
             len: 0,
-            baseUrl: process.env.BASE_URL
+            baseUrl: process.env.BASE_URL,
+            searchShops: [],
+            isFocus: false
         }
     },
-    created() {
+    watch: {
+        shops(){
+            this.$nextTick(()=>{
+                let shopDomArr = document.querySelector('.show ul');
+                let lastShop = shopDomArr.lastChild.childNodes[0]
+                let interse = new IntersectionObserver(entries => {
+                    console.log(5131321, entries.length)
+                    entries.forEach(async item => { 
+                        if(item.isIntersecting){
+                            try {
+                                if(this.begin > (this.len / 12) + 1){
+                                    return
+                                }
+                                let {data} = await this.queryShopsByPage()
+                                console.log(data)
+                                this.shops = this.shops.concat(data);
+                                this.shops.forEach(function(shop, index) {
+                                    shop.select = false;
+                                });
+                                this.$store.dispatch("arrData", data);
+                                this.begin = this.begin + 1;
+                            } catch (error) {
+                                console.log(error);
+                                alert("获取数据失败！");
+                            }
+                        }
+                    });
+                });
+                interse.observe(lastShop)
+            })
+        }
+    },
+    async created() {
         let shops = JSON.parse(localStorage.getItem('shops'))
         if(shops && shops.length){
             this.shops = shops
+            this.begin += 1;
         }else {
-            this.$axios.get(`api/queryShopsByPage/${this.begin}`)
-                .then((response) => {
-                    this.shops = response.data;
-                    this.shops.forEach(function(shop, index) {
-                        shop.select = false;
-                    });
-                    localStorage.setItem('shops', JSON.stringify(shops))
-                    this.$store.dispatch("arrData", response.data);
-                    this.begin++;
-                })
-                .catch((error) => {
-                    console.log(response)
-                    console.log(error);
-                    throw new Error("获取数据失败!");
+            try {
+                let {data} = await this.queryShopsByPage()
+                console.log(data)
+                this.shops = data;
+                this.shops.forEach(function(shop, index) {
+                    shop.select = false;
                 });
-        }
-        this.$axios.get(`api/queryShopsNum`)
-            .then((response) => {
-                this.len = response.data;
-            })
-            .catch((error) => {
+                this.$store.dispatch("arrData", data);
+                this.begin = this.begin + 1;
+            } catch (error) {
                 console.log(error);
-                throw new Error("获取数据失败!");
-            });
+                alert("获取数据失败！");
+            }
+        }
+        this.queryShopsNum()
     },
     methods: {
         queryByPrice(wd) {
@@ -120,24 +151,78 @@ export default {
                     this.shops = response.data;
                 })
                 .catch((error) => {
+                    alert("获取数据失败！");
                     console.log(error);
                     throw new Error("获取数据失败!");
                 });
         },
-        select(i){
-            this.shops[i].select = !this.shops[i].select
-            this.shops = Object.assign({}, this.shops)
+        searchShop(e){
+            let val = e.target.value.trim()
+            if(val){
+                let shops = this.shops.filter((shop)=>{
+                    return shop.desc.indexOf(val) > -1;
+                })
+                this.searchShops = shops
+            }
+        },
+        ShopDetail(e){
+            let id = e.target.getAttribute('data-id');
+            if(id){
+                this.$router.push('shopdetail/' + id)
+            }
+        },
+        queryShopsByPage(){
+            return this.$axios.get(`api/queryShopsByPage/${this.begin}`)
+        },
+        queryShopsNum(){
+            this.$axios.get(`api/queryShopsNum`)
+                .then((response) => {
+                    this.len = response.data;
+                })
+                .catch((error) => {
+                    alert("获取数据失败！");
+                    console.log(error);
+                    throw new Error("获取数据失败!");
+                });
         }
     }
 }
 </script>
 <style lang="scss" scoped>
 #shopList {
+    .show {
+        &::after {
+            content: '';
+            display: block;
+            width: 100%;
+            margin-top: 30px;
+            border-top: 1px solid #0003;
+        }
+    }
+    
     .show .item .item-bot .bot2 .id {
         display: none;
     }
 
+    .show ul {
+        &::after {
+            content: '';
+            display: block;
+            clear: both;
+            overflow: hidden;
+        }
+    }
+
+    .bottom {
+        margin: 30px 0;
+        padding: 30px 0;
+        text-align: center;
+        color: #000000;
+        background-color: #f6f6f6;
+    }
+
     .nz-top-right {
+        float: right;
         display: inline-block;
         position: relative;
         height: 30px;
@@ -149,14 +234,11 @@ export default {
             height: 30px;
             text-indent: 0.3em;
             outline: none;
-            margin-right: 80px;
-            border: 2px solid #6ac1d4;
+            vertical-align: 1px;
+            border: 1px solid #6ac1d4;
         }
 
-        .button button {
-            position: absolute;
-            top: 0px;
-            right: 20px;
+        .input button {
             width: 60px;
             height: 34px;
             border: none;
@@ -165,47 +247,46 @@ export default {
         }
     }
 
-    .result {
-        width: 461px;
-        border: 1px solid black;
-        background-color: #fff;
-
-        li {
-            line-height: 30px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-
-            &:hover {
-                cursor: pointer;
-                background-color: #64a1d6;
-            }
-        }
-    }
-
     .navg {
         width: 920px;
         height: 37px;
         margin: 0 auto;
         padding: 5px 0;
-
         .nav {
             height: 37px;
-
-            li {
+            .navlist {
                 float: left;
                 line-height: 37px;
                 margin-right: 30px;
-
                 a {
                     color: #000;
                     font-size: 15px;
                     font-weight: bold;
-
                     &:hover {
                         color: #64a1d6;
                     }
                 }
+            }
+        }
+    }
+
+    .result {
+        position: relative;
+        width: 461px;
+        z-index: 10;
+        background-color: #fff;
+        user-select: none;
+        .list {
+            height: 30px;
+            width: 100%;
+            margin: 3px 0;
+            line-height: 30px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            &:hover {
+                cursor: pointer;
+                background-color: #64a1d6;
             }
         }
     }
@@ -386,8 +467,6 @@ export default {
 
     .show {
         width: 920px;
-        height: 1000px;
-
         .item {
             width: 210px;
             height: 300px;

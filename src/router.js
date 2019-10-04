@@ -68,7 +68,7 @@ export default new Router({
 			component: resolve => require(['./components/userInfoAdmin/CollectedShop.vue'], resolve)
 		}]
 	}, {
-		path: '/<addSho></addSho>p',
+		path: '/addShop',
 		name: 'AddShop',
 		component: resolve => require(['./components/admin/AddShop.vue'], resolve)
 	}, {
