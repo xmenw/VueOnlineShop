@@ -3,4 +3,5 @@ module.exports = {
 	arrComment: [],
 	arrUser: [],
 	arrSearch: [],
+	arrSearchShops: [],
 }

@@ -24,6 +24,16 @@
                 <input type="text" name="price" autocomplete="off" v-model="price">
             </div>
             <div>
+                <span class="name">商品类型：</span>
+                <select name="type" v-model="type">
+                    <option value="短袖" selected="selected">短袖</option>
+                    <option value="外套">外套</option>
+                    <option value="毛衣">毛衣</option>
+                    <option value="羽绒服">羽绒服</option>
+                    <option value="裤子">裤子</option>
+                </select>
+            </div>
+            <div>
                 <span class="name">商品数量：</span>
                 <input type="text" name="num" autocomplete="off" v-model="num">
             </div>
@@ -43,7 +53,8 @@ export default {
             color: '',
             size: '',
             price: '',
-            num: ''
+            num: '',
+            type: ''
         }
     },
     methods: {

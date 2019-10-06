@@ -33,7 +33,7 @@
                                 >
                             </div>
                             <div class="button">
-                                <button @click.prevent="" type="submit">搜索</button>
+                                <button @click.prevent.enter="searchType" type="submit">搜索</button>
                             </div>
                         </form>
                         <ul class="result"
@@ -120,6 +120,18 @@ export default {
             if(id){
                 this.$router.push('shopdetail/' + id)
             }
+        },
+        async searchType(e){
+            let value = search.value.trim();
+            if(!value){
+                return
+            }
+            
+            this.isSearch = false;
+            let { data } = await this.$axios.get(`api/queryShopsByType?type=${value}`);
+            console.log(data)
+            this.$store.dispatch('arrSearchShops', data);
+            localStorage.setItem('arrSearchShops', JSON.stringify(data))
         }
     }
 }

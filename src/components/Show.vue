@@ -197,6 +197,10 @@
                     </div>
                 </div>
             </div>
+            <!-- 搜索商品展示区 -->
+            <div class="searchShop">
+                <list-component></list-component>
+            </div>
             <!-- 底部 -->
             <div class="bottom">
                 <!-- end -->
@@ -299,31 +303,39 @@
 </template>
 <script>
 import WebCarousel from './component/WebCarousel'
+import ListComponent from './component/ListComponent'
 
 export default {
     name: 'Show',
     data(){
         return {
-            searchShops: []
+            searchShops: [],
+            len: 0
         }
     },
-    created(){
-        this.$axios.get(`/api/query5ShopsBySales`)
+    async created(){
+        let { data } = await this.queryShopsNum();
+        this.$axios.get(`/api/query5ShopsBySales?begin=${Math.floor(Math.random() * (data - 5))}`)
         .then(({data})=>{
             this.searchShops = data
-            console.log(this.searchShops)
         })
         .catch((err)=>{
             console.log(err)
         })
     },
     components: {
-        WebCarousel
+        WebCarousel,
+        ListComponent
     },
     computed: {
         user(){
             let user = localStorage.getItem("user");
             return user ? user : "你好";
+        }
+    },
+    methods: {
+        queryShopsNum(){
+            return this.$axios.get(`api/queryShopsNum`)
         }
     }
 }
@@ -552,15 +564,16 @@ export default {
     .center-bot .router {
         float: left;
         display: inline-block;
-        width: 220px;
-        height: 125px;
+        width: 205px;
+        height: 115px;
+        margin: 5px;
         & img {
             width: 100%;
             height: 100%;
         }
         &:nth-of-type(1){
-            width: 250px;
-            height: 245px;
+            width: 240px;
+            height: 235px;
         }
         &::after{
             content: '';
