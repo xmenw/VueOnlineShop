@@ -72,6 +72,10 @@ export default new Router({
 		name: 'AddShop',
 		component: resolve => require(['./components/admin/AddShop.vue'], resolve)
 	}, {
+		path: '/shopsData',
+		name: 'ShopsData',
+		component: resolve => require(['./components/admin/ShopsData.vue'], resolve)
+	}, {
 		path: '/updateShop/:id',
 		name: 'UpdateShop',
 		component: resolve => require(['./components/admin/UpdateShop.vue'], resolve)

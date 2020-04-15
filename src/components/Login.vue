@@ -6,9 +6,9 @@
                 <form action="/api/selectUser" method="post" class="form">
                     <input type="text" autocomplete="off" placeholder="请输入用户名" name="username" class="input" 
                       v-model="username"
+                      autofocus="autofocus" 
                       @blur="changeImg1()" 
-                      @focus="changeImg2()" 
-                      @change="userChange()"><br>
+                      @focus="changeImg2()"><br>
                     <input type="password" placeholder="请输入密码" name="password" class="input" 
                       v-model="password"
                       @blur="changeImg1()" 
@@ -57,7 +57,9 @@ export default {
             .then((response) => {
                 this.isLogin = response.data > 0 ? true : false;
                 if(this.isLogin){
-                  location.href="/";
+                  localStorage.setItem("user", this.username);
+                  this.$store.dispatch('setUser', { name: this.username })
+                  this.$router.push('/');
                 }else {
                   alert("账号密码错误。"); 
                 }
@@ -66,9 +68,6 @@ export default {
                 alert('获取数据失败')
                 console.log(error);
             });
-        },
-        userChange() {
-            localStorage.setItem("user", this.username);
         }
     }
 }

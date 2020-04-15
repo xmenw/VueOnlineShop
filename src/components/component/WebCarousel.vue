@@ -1,33 +1,36 @@
 <template>
-  <div class="vuecarousel" v-cloak>
-    <div class="contain" 
-         @mouseenter="stop" 
+  <div class="vuecarousel"
+       v-cloak>
+    <div class="contain"
+         @mouseenter="stop"
          @mouseleave="start"
-         :style="{width: imgWidth + 'px', height: imgHeight + 'px'}"
-    >
+         :style="{width: imgWidth + 'px', height: imgHeight + 'px'}">
       <ul class="ul">
         <transition-group name="slide-fade">
-          <li class="items" 
-              v-for="(img, index) in imgs" :key="img.src"  
-              v-show="index == showIndex"
-          >
-            <img :src="img.src" alt="轮播图">
+          <li class="items"
+              v-for="(img, index) in imgs"
+              :key="img.src"
+              v-show="index == showIndex">
+            <img :src="img.src"
+                 alt="轮播图">
           </li>
         </transition-group>
       </ul>
-      <ul class="dots" 
-          :style="{width: imgs.length * (dotWidth + 10) + 'px',  height: dotWidth + 'px'}"
-      >
-        <li v-for="(img, index) in imgs" :key="index"  
-            :class="index == showIndex ? 'active' : ''" 
+      <ul class="dots"
+          :style="{width: imgs.length * (dotWidth + 10) + 'px',  height: dotWidth + 'px'}">
+        <li v-for="(img, index) in imgs"
+            :key="index"
+            :class="index == showIndex ? 'active' : ''"
             @click="showIndex = index"
-            :style="{width: dotWidth + 'px', height: dotWidth + 'px'}"
-        >
+            :style="{width: dotWidth + 'px', height: dotWidth + 'px'}">
         </li>
       </ul>
-      <div class="control" v-show="show">
-        <span class="left"  @click="previous"></span>
-        <span class="right" @click="next"></span>
+      <div class="control"
+           v-show="show">
+        <span class="left"
+              @click="previous"></span>
+        <span class="right"
+              @click="next"></span>
       </div>
     </div>
   </div>
@@ -43,20 +46,20 @@ export default {
     }, this.delay)
   },
   beforeDestroy () {
-   clearInterval(this.timer); 
+    clearInterval(this.timer);
   },
-  data(){
+  data () {
     return {
       showIndex: 0, //显示第几个图片
       timer: null,  // 定时器
       show: false,   // 前后按钮显示
-      imgs:[
-            {src: '/image/show1.jpg'},
-            {src: '/image/show2.jpg'},
-            {src: '/image/show3.jpg'},
-            {src: '/image/show4.jpg'},
-            {src: '/image/show5.jpg'}
-           ],
+      imgs: [
+        { src: '/image/show1.jpg' },
+        { src: '/image/show2.jpg' },
+        { src: '/image/show3.jpg' },
+        { src: '/image/cloth4.jpg' },
+        { src: '/image/cloth6.jpg' }
+      ],
       delay: 2000,
       imgWidth: 690,
       imgHeight: 260,
@@ -64,21 +67,21 @@ export default {
     }
   },
   methods: {
-    previous(){
-      if(this.showIndex <= 0){
+    previous () {
+      if (this.showIndex <= 0) {
         this.showIndex = this.imgs.length - 1;
-      }else{
-        this.showIndex --;
+      } else {
+        this.showIndex--;
       }
     },
     next () {
-      if(this.showIndex >= this.imgs.length - 1){
+      if (this.showIndex >= this.imgs.length - 1) {
         this.showIndex = 0;
-      }else{
-        this.showIndex ++;
+      } else {
+        this.showIndex++;
       }
     },
-    start(){
+    start () {
       this.show = false;
       clearInterval(this.timer);
       this.timer = setInterval(() => {
@@ -98,13 +101,13 @@ export default {
   display: none;
 }
 .contain {
-   position: relative;
-   transition: all .8s;
-   color: #fff;
-   overflow: hidden;
-   cursor: pointer;
-   width: 100%;
-   height: 100%;
+  position: relative;
+  transition: all 0.8s;
+  color: #fff;
+  overflow: hidden;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
   .ul {
     height: 100%;
     .items {
@@ -119,12 +122,13 @@ export default {
     }
   }
   .slide-fade-enter-active {
-    transition: all .5s ease;
+    transition: all 0.5s ease;
   }
   .slide-fade-leave-active {
-    transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+    transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
   }
-  .slide-fade-enter, .slide-fade-leave-to{
+  .slide-fade-enter,
+  .slide-fade-leave-to {
     transform: translateX(30px);
     opacity: 0;
   }
@@ -138,7 +142,7 @@ export default {
       float: left;
       margin: 0px 5px;
       border-radius: 50%;
-      transition: all .3s;
+      transition: all 0.3s;
       background-color: antiquewhite;
       list-style: none;
     }
@@ -159,11 +163,11 @@ export default {
     }
     .left {
       left: 10px;
-      background: url('/image/left.png') no-repeat center;
+      background: url("/image/left.png") no-repeat center;
     }
     .right {
       right: 10px;
-      background: url('/image/right.png') no-repeat center;
+      background: url("/image/right.png") no-repeat center;
     }
   }
 }
