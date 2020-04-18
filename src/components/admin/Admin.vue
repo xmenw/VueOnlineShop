@@ -1,89 +1,87 @@
 <template>
   <div id="admin">
-    <div class="navs addWrap">
-      <div>
-        <router-link :to="{ name: 'AddShop' }">
-          <button class="addBtn">添加商品</button>
-        </router-link>
-      </div>
-      <div>
-        <router-link :to="{ name: 'ShopsData' }" :shops="shops">
-          <button class="addBtn">商品数据统计</button>
-        </router-link>
-      </div>
-    </div>
-
-    <a-table :dataSource="shops" :columns="columns" :pagination="pagination">
-      <div
-        slot="filterDropdown"
-        slot-scope="{
+    <a-tabs defaultActiveKey="1"
+            @change="changeTab"
+            tabPosition="left"
+            style="width: 100%">
+      <a-tab-pane tab="添加商品"
+                  key="1">
+        <AddShop />
+      </a-tab-pane>
+      <a-tab-pane tab="商品数据统计"
+                  key="2">
+        <ShopsData />
+      </a-tab-pane>
+      <a-tab-pane tab="管理商品"
+                  key="3">
+        <a-table :dataSource="shops"
+                 :columns="columns"
+                 :pagination="pagination">
+          <div slot="filterDropdown"
+               slot-scope="{
           setSelectedKeys,
           selectedKeys,
           confirm,
           clearFilters,
           column,
         }"
-        style="padding: 8px"
-      >
-        <a-input
-          v-ant-ref="(c) => (searchInput = c)"
-          :placeholder="`搜索 ${column.dataIndex}`"
-          :value="selectedKeys[0]"
-          @change="
+               style="padding: 8px">
+            <a-input v-ant-ref="(c) => (searchInput = c)"
+                     :placeholder="`搜索 ${column.dataIndex}`"
+                     :value="selectedKeys[0]"
+                     @change="
             (e) => setSelectedKeys(e.target.value ? [e.target.value] : [])
           "
-          @pressEnter="
+                     @pressEnter="
             () => handleSearch(selectedKeys, confirm, column.dataIndex)
           "
-          style="width: 188px; margin-bottom: 8px; display: block;"
-        />
-        <a-button
-          type="primary"
-          @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
-          icon="search"
-          size="small"
-          style="width: 90px; margin-right: 8px"
-          >搜索</a-button
-        >
-        <a-button
-          @click="() => handleReset(clearFilters)"
-          size="small"
-          style="width: 90px"
-          >重置</a-button
-        >
-      </div>
-      <a-icon
-        slot="filterIcon"
-        slot-scope="filtered"
-        type="search"
-        :style="{ color: filtered ? '#108ee9' : undefined }"
-      />
-      <template slot="pic" slot-scope="text, record">
-        <div class="imgwrap">
-          <img :src="record.pic" alt="商品图片" />
-        </div>
-      </template>
-      <template
-        v-for="col in ['desc', 'color', 'size', 'price', 'num']"
-        :slot="col"
-        slot-scope="text"
-      >
-        <div :key="col">{{ text }}</div>
-      </template>
-      <template slot="operation" slot-scope="text, record">
-        <router-link :to="'updateShop/' + record.id">
-          <a-button type="primary" style="marginRight:10px">
-            修改
-          </a-button>
-        </router-link>
-        <a-button type="danger" @click="deleteById(record.desc, record.id)">
-          删除
-        </a-button>
-      </template>
-    </a-table>
+                     style="width: 188px; margin-bottom: 8px; display: block;" />
+            <a-button type="primary"
+                      @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
+                      icon="search"
+                      size="small"
+                      style="width: 90px; margin-right: 8px">搜索</a-button>
+            <a-button @click="() => handleReset(clearFilters)"
+                      size="small"
+                      style="width: 90px">重置</a-button>
+          </div>
+          <a-icon slot="filterIcon"
+                  slot-scope="filtered"
+                  type="search"
+                  :style="{ color: filtered ? '#108ee9' : undefined }" />
+          <template slot="pic"
+                    slot-scope="text, record">
+            <div class="imgwrap">
+              <img :src="record.pic"
+                   alt="商品图片" />
+            </div>
+          </template>
+          <template v-for="col in ['desc', 'color', 'size', 'price', 'num']"
+                    :slot="col"
+                    slot-scope="text">
+            <div :key="col">{{ text }}</div>
+          </template>
+          <template slot="operation"
+                    slot-scope="text, record">
+            <router-link :to="'updateShop/' + record.id">
+              <a-button type="primary"
+                        style="marginRight:10px">
+                修改
+              </a-button>
+            </router-link>
+            <a-button type="danger"
+                      @click="deleteById(record.desc, record.id)">
+              删除
+            </a-button>
+          </template>
+        </a-table>
+      </a-tab-pane>
+    </a-tabs>
   </div>
 </template>
 <script>
+import AddShop from './AddShop.vue'
+import ShopsData from './ShopsData.vue'
 const columns = [
   {
     title: '照片',
@@ -138,7 +136,7 @@ const columns = [
 ]
 export default {
   name: 'Admin',
-  data() {
+  data () {
     return {
       shops: [],
       columns,
@@ -151,6 +149,10 @@ export default {
       },
     }
   },
+  components: {
+    AddShop,
+    ShopsData
+  },
   beforeRouteEnter: (to, from, next) => {
     if (localStorage.getItem('user') != 'aaa') {
       next('login')
@@ -158,7 +160,7 @@ export default {
       next()
     }
   },
-  created() {
+  created () {
     this.pagination.onChange = this.onChange
     this.queryAllShops()
     this.$axios
@@ -173,13 +175,13 @@ export default {
       })
   },
   methods: {
-    deleteById(desc, id) {
+    deleteById (desc, id) {
       let flag = confirm(`确定要删除“${desc}”吗?`)
       if (flag) {
         this.confirmed(id)
       }
     },
-    confirmed(id) {
+    confirmed (id) {
       this.$axios
         .get(`api/delete/${id}`)
         .then((response) => {
@@ -195,7 +197,7 @@ export default {
           throw new Error('获取数据失败!')
         })
     },
-    queryAllShops() {
+    queryAllShops () {
       this.$axios
         .get(`api/queryAllShops`)
         .then((response) => {
@@ -210,18 +212,20 @@ export default {
           throw new Error('获取数据失败!')
         })
     },
-    handleSearch(selectedKeys, confirm, dataIndex) {
+    handleSearch (selectedKeys, confirm, dataIndex) {
       confirm()
       this.searchText = selectedKeys[0]
       this.searchedColumn = dataIndex
     },
-
-    handleReset(clearFilters) {
+    handleReset (clearFilters) {
       clearFilters()
       this.searchText = ''
     },
-    onChange(pageNumber) {
+    onChange (pageNumber) {
       console.log('Page: ', pageNumber)
+    },
+    changeTab (key) {
+      console.log(key);
     },
   },
 }

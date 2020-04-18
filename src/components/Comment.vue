@@ -34,7 +34,6 @@
   </div>
 </template>
 <script>
-import { setTimeout } from 'timers';
 import { mapState } from 'vuex'
 export default {
   name: "Comment",

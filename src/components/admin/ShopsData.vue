@@ -39,7 +39,7 @@ export default {
     grid-row-gap: 100px;
     grid-column-gap: 20px;
     grid-template-columns: 1fr 1fr;
-    width: 1200px;
+    width: 100%;
     height: 100%;
     margin-top: 30px;
     overflow: hidden;

@@ -1,13 +1,48 @@
 <template>
   <div id="lineBar">
     <div class="lineCont">
+      <div>
+        请选择要查看的用户
+        <a-select style="width: 120px"
+                  @change="handleChange">
+          <a-select-option v-for="name in names"
+                           :value="name"
+                           :key="name">{{name}}</a-select-option>
+        </a-select>
+      </div>
       <div id="barCharts"></div>
     </div>
   </div>
 </template>
 <script>
-import { onMounted } from '@vue/composition-api'
+import { onMounted, reactive } from '@vue/composition-api'
 
+function getNameNum (ctx, user) {
+  return new Promise((resolve, reject) => {
+    ctx.root.$axios.post(`/api/queryShopsNameNums?username=${user}`)
+      .then((res) => {
+        console.log(res)
+        resolve(res.data)
+      })
+      .catch((err) => {
+        reject([])
+        console.log(err)
+      })
+  })
+}
+function getUsersName (ctx) {
+  return new Promise((resolve, reject) => {
+    ctx.root.$axios.post(`/api/selectUsersName`)
+      .then((res) => {
+        console.log(res)
+        resolve(res.data)
+      })
+      .catch((err) => {
+        reject([])
+        console.log(err)
+      })
+  })
+}
 var option = {
   // 标题
   title: {
@@ -68,14 +103,60 @@ var option = {
 }
 export default {
   name: 'lineBar',
-  setup(props, context) {
-    onMounted(() => {
-      let myChart = context.root.$echarts.init(
+  setup (props, context) {
+    const names = reactive([])
+    // const name = reactive('')
+    let dates = []
+    let types = []
+    let myChart = null
+    async function handleChange (value) {
+      types = []
+      dates = []
+      try {
+        let data = await getNameNum(context, value)
+        Object.values(data).forEach((data) => {
+          types.push(data.id)
+          dates.push(data.sales)
+        })
+      } catch (error) {
+        dates = []
+        console.log(error)
+      }
+      option.series[0].data = dates
+      option.xAxis.data = types
+      myChart.setOption(option)
+      // this.name = value
+    }
+    onMounted(async () => {
+      myChart = context.root.$echarts.init(
         document.getElementById('barCharts')
       )
+      try {
+        let data = await getUsersName(context)
+        names.push(...data)
+      } catch (error) {
+        dates = []
+        console.log(error)
+      }
+      try {
+        let data = await getNameNum(context, name)
+        Object.values(data).forEach((data) => {
+          types.push(data.id)
+          dates.push(data.sales)
+        })
+      } catch (error) {
+        dates = []
+        console.log(error)
+      }
+      option.series[0].data = dates
+      option.xAxis.data = types
       myChart.setOption(option)
     })
-    return {}
+    return {
+      handleChange,
+      names,
+      // name
+    }
   }
 }
 </script>
@@ -86,6 +167,7 @@ export default {
   .lineCont {
     display: flex;
     justify-content: center;
+    flex-direction: column;
     #barCharts {
       width: 500px;
       height: 500px;

@@ -7,7 +7,19 @@
 </template>
 <script>
 import { onMounted } from '@vue/composition-api'
-
+function getTypesNum (ctx) {
+  return new Promise((resolve, reject) => {
+    ctx.root.$axios.post(`/api/queryShopsTypeNums`)
+      .then((res) => {
+        console.log(res)
+        resolve(res.data)
+      })
+      .catch((err) => {
+        reject([])
+        console.log(err)
+      })
+  })
+}
 var option = {
   //标题
   title: {
@@ -16,7 +28,6 @@ var option = {
   //工具箱
   //保存图片
   toolbox: {
-    show: true,
     show: true,
     feature: {
       saveAsImage: {
@@ -38,7 +49,7 @@ var option = {
   },
   //图例-每一条数据的名字叫销量
   legend: {
-    data: ['销量']
+    data: ['每个种类服装总销量']
   },
   //x轴
   xAxis: {
@@ -51,17 +62,31 @@ var option = {
     {
       name: '销量',
       type: 'line',
-      data: [40, 20, 35, 60, 55, 10]
     }
   ]
 }
 export default {
   name: 'lineFold',
-  setup(props, context) {
-    onMounted(() => {
+  setup (props, context) {
+    onMounted(async () => {
       let myChart = context.root.$echarts.init(
         document.getElementById('lineCharts')
       )
+      let dates = []
+      let types = []
+      try {
+        let data = await getTypesNum(context)
+        Object.values(data).forEach((data) => {
+          types.push(data.type)
+          dates.push(data.sales)
+        })
+      } catch (error) {
+        dates = []
+        console.log(error)
+      }
+      console.log(23432423, dates)
+      option.series[0].data = dates
+      option.xAxis.data = types
       myChart.setOption(option)
     })
     return {}
