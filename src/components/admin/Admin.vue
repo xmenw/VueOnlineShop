@@ -76,12 +76,17 @@
           </template>
         </a-table>
       </a-tab-pane>
+      <a-tab-pane tab="网站公告"
+                  key="4">
+        <NoticeList />
+      </a-tab-pane>
     </a-tabs>
   </div>
 </template>
 <script>
 import AddShop from './AddShop.vue'
 import ShopsData from './ShopsData.vue'
+import NoticeList from './NoticeList.vue'
 const columns = [
   {
     title: '照片',
@@ -151,7 +156,8 @@ export default {
   },
   components: {
     AddShop,
-    ShopsData
+    ShopsData,
+    NoticeList
   },
   beforeRouteEnter: (to, from, next) => {
     if (localStorage.getItem('user') != 'aaa') {

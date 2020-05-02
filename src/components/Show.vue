@@ -6,15 +6,14 @@
       <div class="show-left">
         <ul class="item">
           <li>
-            <a href="##" target="_blank">女装</a> /
+            <a href="##"
+               target="_blank">女装</a> /
             <router-link :to="{ name: 'ShopList' }">男装</router-link>
           </li>
-          <li
-            v-for="(type, index) in shopTypes"
-            :key="index"
-            style="cursor: pointer"
-            @click="searchByTypes(index)"
-          >
+          <li v-for="(type, index) in shopTypes"
+              :key="index"
+              style="cursor: pointer"
+              @click="searchByTypes(index)">
             {{ type }}
           </li>
         </ul>
@@ -27,13 +26,12 @@
         </div>
         <!-- 中下 -->
         <div class="center-bot">
-          <router-link
-            :to="'shopdetail/' + shop.id"
-            v-for="shop in searchShops"
-            :key="shop.id"
-            class="router"
-          >
-            <img :src="shop.pic" class="search-img" />
+          <router-link :to="'shopdetail/' + shop.id"
+                       v-for="shop in searchShops"
+                       :key="shop.id"
+                       class="router">
+            <img :src="shop.pic"
+                 class="search-img" />
           </router-link>
         </div>
       </div>
@@ -49,42 +47,30 @@
                 <span>我的小店</span>
               </div>
             </div>
-            <span id="hello"
-              >Hi! <em id="username">{{ user.name }}</em></span
-            >
+            <span id="hello">Hi! <em id="username">{{ user.name }}</em></span>
           </div>
           <div class="bot">
             <div class="bot-div">
-              <a href="#" v-if="user.name" @click="logout(user.name)">注销</a>
-              <router-link v-else :to="{ name: 'Login' }">登录</router-link>
+              <a href="#"
+                 v-if="user.name"
+                 @click="logout(user.name)">注销</a>
+              <router-link v-else
+                           :to="{ name: 'Login' }">登录</router-link>
               <router-link :to="{ name: 'Regist' }">注册</router-link>
             </div>
           </div>
         </div>
         <div class="notice">
-          <ul class="not">
-            <li class="lli">公告</li>
-          </ul>
-          <div class="nr" style="display: inline-block;">
-            <ul class="nei-rong">
-              <li>
-                <a href="##">2018小店造物节9月定址西湖</a>
-              </li>
-              <li>
-                <a href="##">小店618激活传统商圈 </a>
-              </li>
-            </ul>
-          </div>
+          <Notice></Notice>
         </div>
         <div class="bot"></div>
       </div>
     </div>
     <!-- 搜索商品展示区 -->
-    <div class="searchShop" ref="shopShow">
-      <list-component
-        v-if="arrSearchShops.length"
-        :shops="arrSearchShops"
-      ></list-component>
+    <div class="searchShop"
+         ref="shopShow">
+      <list-component v-if="arrSearchShops.length"
+                      :shops="arrSearchShops"></list-component>
     </div>
     <!-- 底部 -->
     <div class="bottom">
@@ -160,10 +146,8 @@
         <span><a href="##">增值电信业务经营许可证：浙B2-20080224</a></span>
         <span><b>|</b></span>
         <span>
-          <em
-            >互联网违法和不良信息举报电话：0571-81683755
-            blxxjb@alibaba-inc.com</em
-          >
+          <em>互联网违法和不良信息举报电话：0571-81683755
+            blxxjb@alibaba-inc.com</em>
         </span>
       </p>
       <p class="about-p-bot">
@@ -174,25 +158,32 @@
           <em>（浙）网械平台备字[2018]第00004号</em>
         </span>
         <span><b>|</b></span>
-        <span
-          ><a href="##"
-            >出版物网络交易平台服务经营备案证：新出发浙备字第002号</a
-          ></span
-        >
+        <span><a href="##">出版物网络交易平台服务经营备案证：新出发浙备字第002号</a></span>
         <span><b>|</b></span>
       </p>
       <div class="about-bot">
-        <span><a href="##" class="pic1"></a></span>
-        <span><a href="##" class="pic2"></a></span>
-        <span><a href="##" class="pic3"></a></span>
-        <span><a href="##" class="pic4"></a></span>
-        <span><a href="##" class="pic5"></a></span>
-        <span><a href="##" class="pic6"></a></span>
-        <span><a href="##" class="pic7"></a></span>
-        <span><a href="##" class="pic8"></a></span>
-        <span><a href="##" class="pic9"></a></span>
-        <span><a href="##" class="pic10"></a></span>
-        <span><a href="##" class="pic11"></a></span>
+        <span><a href="##"
+             class="pic1"></a></span>
+        <span><a href="##"
+             class="pic2"></a></span>
+        <span><a href="##"
+             class="pic3"></a></span>
+        <span><a href="##"
+             class="pic4"></a></span>
+        <span><a href="##"
+             class="pic5"></a></span>
+        <span><a href="##"
+             class="pic6"></a></span>
+        <span><a href="##"
+             class="pic7"></a></span>
+        <span><a href="##"
+             class="pic8"></a></span>
+        <span><a href="##"
+             class="pic9"></a></span>
+        <span><a href="##"
+             class="pic10"></a></span>
+        <span><a href="##"
+             class="pic11"></a></span>
       </div>
     </div>
   </div>
@@ -200,12 +191,13 @@
 <script>
 import WebCarousel from './component/WebCarousel'
 import ListComponent from './component/ListComponent'
+import Notice from './component/Notice'
 
 import { mapState } from 'vuex'
 
 export default {
   name: 'Show',
-  data() {
+  data () {
     return {
       searchShops: [],
       len: 0,
@@ -213,7 +205,7 @@ export default {
       shopShow: null,
     }
   },
-  async created() {
+  async created () {
     let user
     try {
       user = localStorage.getItem('user')
@@ -252,19 +244,20 @@ export default {
   components: {
     WebCarousel,
     ListComponent,
+    Notice
   },
   computed: {
     ...mapState(['arrSearchShops', 'user']),
   },
   methods: {
-    queryShopsNum() {
+    queryShopsNum () {
       return this.$axios.get(`api/queryShopsNum`)
     },
-    logout(user) {
+    logout (user) {
       localStorage.removeItem('user')
       this.$store.dispatch('setUser', {})
     },
-    queryTypes() {
+    queryTypes () {
       return new Promise((resolve, reject) => {
         this.$axios
           .get(`/api/queryAllTypes`)
@@ -276,7 +269,7 @@ export default {
           })
       })
     },
-    async searchByTypes(i) {
+    async searchByTypes (i) {
       let params = new URLSearchParams()
       params.append('types', JSON.stringify(this.shopTypes[i]))
       try {
@@ -364,7 +357,7 @@ export default {
   }
 
   .show .show-left .item > li::after {
-    content: '>';
+    content: ">";
     float: right;
     color: #b3b3b3;
     font-weight: 600;
@@ -531,7 +524,7 @@ export default {
       height: 235px;
     }
     &::after {
-      content: '';
+      content: "";
       display: block;
       clear: both;
       overflow: hidden;
@@ -713,22 +706,22 @@ export default {
   }
 
   .show .show-right .login .top .p .p-left::before {
-    content: '';
+    content: "";
     display: inline-block;
     width: 16px;
     height: 16px;
     vertical-align: middle;
-    background: url('/image/pic.png');
+    background: url("/image/pic.png");
     background-position: 0 -572.5px;
   }
 
   .show .show-right .login .top .p .p-right::before {
-    content: '';
+    content: "";
     display: inline-block;
     width: 16px;
     height: 16px;
     vertical-align: middle;
-    background: url('/image/pic.png');
+    background: url("/image/pic.png");
     background-position: 0 -573px;
   }
 
@@ -852,7 +845,7 @@ export default {
     text-align: center;
   }
 
-  .show .show-right .xiaoge .xg li a [class^='span'] {
+  .show .show-right .xiaoge .xg li a [class^="span"] {
     display: inline-block;
     line-height: 24px;
     margin-top: 11px;
@@ -871,61 +864,61 @@ export default {
   }
 
   .show .show-right .xiaoge .xg li a .span1 {
-    background: url('/image/pic.png');
+    background: url("/image/pic.png");
   }
 
   .show .show-right .xiaoge .xg li a .span2 {
-    background: url('/image/pic.png');
+    background: url("/image/pic.png");
     background-position: 0 -87px;
   }
 
   .show .show-right .xiaoge .xg li a .span3 {
-    background: url('/image/pic.png');
+    background: url("/image/pic.png");
     background-position: 0 -44px;
   }
 
   .show .show-right .xiaoge .xg li a .span4 {
-    background: url('/image/pic.png');
+    background: url("/image/pic.png");
     background-position: 0 -132px;
   }
 
   .show .show-right .xiaoge .xg li a .span5 {
-    background: url('/image/pic.png');
+    background: url("/image/pic.png");
     background-position: 0 -176px;
   }
 
   .show .show-right .xiaoge .xg li a .span6 {
-    background: url('/image/pic.png');
+    background: url("/image/pic.png");
     background-position: 0 -220px;
   }
 
   .show .show-right .xiaoge .xg li a .span7 {
-    background: url('/image/pic.png');
+    background: url("/image/pic.png");
     background-position: 0 -264px;
   }
 
   .show .show-right .xiaoge .xg li a .span8 {
-    background: url('/image/pic.png');
+    background: url("/image/pic.png");
     background-position: 0 -308px;
   }
 
   .show .show-right .xiaoge .xg li a .span9 {
-    background: url('/image/pic.png');
+    background: url("/image/pic.png");
     background-position: 0 -352px;
   }
 
   .show .show-right .xiaoge .xg li a .span10 {
-    background: url('/image/pic.png');
+    background: url("/image/pic.png");
     background-position: 0 -396px;
   }
 
   .show .show-right .xiaoge .xg li a .span11 {
-    background: url('/image/pic.png');
+    background: url("/image/pic.png");
     background-position: 0 -440px;
   }
 
   .show .show-right .xiaoge .xg li a .span12 {
-    background: url('/image/pic.png');
+    background: url("/image/pic.png");
     background-position: 0 -484px;
   }
 
@@ -951,7 +944,7 @@ export default {
   }
 
   .bottom .end span::before {
-    content: '';
+    content: "";
     position: absolute;
     border-top: 1px solid #acb;
     display: inline-block;
@@ -963,7 +956,7 @@ export default {
   }
 
   .bottom .end span::after {
-    content: '';
+    content: "";
     position: absolute;
     border-top: 1px solid #acb;
     display: inline-block;
@@ -1052,7 +1045,7 @@ export default {
     color: #f00;
   }
 
-  .about [class^='about-p'] {
+  .about [class^="about-p"] {
     height: 20px;
     line-height: 20px;
   }
@@ -1097,7 +1090,7 @@ export default {
     width: 20px;
     height: 20px;
     background-position: -861px 0px;
-    background-image: url('/image/pic.jpg');
+    background-image: url("/image/pic.jpg");
   }
 
   .about .about-bot {
@@ -1115,66 +1108,66 @@ export default {
   }
 
   .about .about-bot span .pic1 {
-    background-image: url('/image/pic3.gif');
+    background-image: url("/image/pic3.gif");
     background-position: 0 0;
   }
 
   .about .about-bot span .pic2 {
-    background-image: url('/image/pic.jpg');
+    background-image: url("/image/pic.jpg");
     background-position: 0px 0px;
     width: 30px;
   }
 
   .about .about-bot span .pic3 {
-    background-image: url('/image/pic.jpg');
+    background-image: url("/image/pic.jpg");
     background-position: -40px 0;
     width: 33px;
   }
 
   .about .about-bot span .pic4 {
-    background-image: url('/image/pic.jpg');
+    background-image: url("/image/pic.jpg");
     background-position: -80px 0;
     width: 50px;
   }
 
   .about .about-bot span .pic5 {
-    background-image: url('/image/pic.jpg');
+    background-image: url("/image/pic.jpg");
     background-position: -140px 0;
     width: 83px;
   }
 
   .about .about-bot span .pic6 {
-    background-image: url('/image/pic.jpg');
+    background-image: url("/image/pic.jpg");
     background-position: -240px 0;
     width: 94px;
   }
 
   .about .about-bot span .pic7 {
-    background-image: url('/image/pic2.png');
+    background-image: url("/image/pic2.png");
     background-position: 0 -18px;
     width: 250px;
   }
 
   .about .about-bot span .pic8 {
-    background-image: url('/image/pic.jpg');
+    background-image: url("/image/pic.jpg");
     background-position: -650px 0;
     width: 105px;
   }
 
   .about .about-bot span .pic9 {
-    background-image: url('/image/pic.jpg');
+    background-image: url("/image/pic.jpg");
     background-position: -345px 0;
     width: 82px;
   }
 
   .about .about-bot span .pic10 {
-    background-image: url('/image/pic.jpg');
+    background-image: url("/image/pic.jpg");
     background-position: -761px 0;
     width: 97px;
   }
 
   .about .about-bot span .pic11 {
-    background-image: url('/image/pic.jpg');
+    background-image: url("/image/pic.jpg");
     background-position: -884px 0;
     width: 249px;
   }
