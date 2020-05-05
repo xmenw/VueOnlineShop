@@ -1,26 +1,33 @@
 <template>
-  <div id="listComponent" v-if="len > 0">
+  <div id="listComponent"
+       v-if="len > 0">
     <div class="nz">
       <div class="nav-center">
         <div class="center-top">
-          <ul @click="select" ref="names">
-            <li class="active"><a @click.prevent="" class="pr">综合排序</a></li>
-            <li><a class="pr" @click="bySales">销量排序</a></li>
-            <li><a class="pr" @click="byPrice(1)">价格升序</a></li>
-            <li><a class="pr" @click="byPrice(2)">价格降序</a></li>
+          <ul @click="select"
+              ref="names">
+            <li class="active"><a @click.prevent=""
+                 class="pr">综合排序</a></li>
+            <li><a class="pr"
+                 @click="bySales">销量排序</a></li>
+            <li><a class="pr"
+                 @click="byPrice(1)">价格升序</a></li>
+            <li><a class="pr"
+                 @click="byPrice(2)">价格降序</a></li>
           </ul>
-          <span class="num"
-            >共:<em>{{ len }}</em
-            >件商品</span
-          >
+          <span class="num">共:<em>{{ len }}</em>件商品</span>
         </div>
-        <div class="show" ref="shopList">
+        <div class="show"
+             ref="shopList">
           <ul>
-            <li v-for="shop in shopsArr" :key="shop.id">
+            <li v-for="shop in shopsArr"
+                :key="shop.id">
               <div class="item">
                 <router-link :to="'shopdetail/' + shop.id">
                   <div class="item-top">
-                    <img class="img" alt="商品图片" :src="baseUrl + shop.pic" />
+                    <img class="img"
+                         alt="商品图片"
+                         :src="baseUrl + shop.pic" />
                   </div>
                 </router-link>
                 <div class="item-bot">
@@ -55,8 +62,8 @@
 import { mapState } from 'vuex'
 
 export default {
-  name: 'SearchShopList',
-  data() {
+  name: 'listComponent',
+  data () {
     return {
       baseUrl: process.env.BASE_URL,
       shopsArr: [],
@@ -69,10 +76,10 @@ export default {
       type: Array,
     },
   },
-  created() {
-    this.shopsArr = JSON.parse(JSON.stringify(this.shops)).slice(5)
+  created () {
+    this.shopsArr = JSON.parse(JSON.stringify(this.shops)).slice(0, 5)
   },
-  mounted() {
+  mounted () {
     this.$nextTick(() => {
       let shopDomArr = document.querySelector('.searchShop .show ul')
       if (!shopDomArr) {
@@ -88,7 +95,7 @@ export default {
             this.shopsArr = this.shopsArr.concat(
               this.shops.slice(this.showNum * this.begin, this.showNum)
             )
-            this.shopsArr.forEach(function(shop) {
+            this.shopsArr.forEach(function (shop) {
               shop.select = false
             })
             this.begin = this.begin + 1
@@ -100,19 +107,25 @@ export default {
   },
   computed: {
     ...mapState(['user', 'arrSearchShops']),
-    len() {
+    len () {
       return this.shopsArr && this.shopsArr.length
     },
   },
   watch: {
-    len(val, oVal) {
+    len (val, oVal) {
       if (oVal) {
         this.$refs.shopList && this.$refs.shopList.scrollIntoView()
       }
     },
+    shops: {
+      handler (val) {
+        this.shopsArr = JSON.parse(JSON.stringify(val)).slice(0, 5)
+      },
+      deep: true
+    }
   },
   methods: {
-    select(e) {
+    select (e) {
       Array.from(this.$refs.names.children).forEach((li) => {
         li.classList.remove('active')
       })
@@ -122,29 +135,29 @@ export default {
         e.target.parentNode.classList.add('active')
       }
     },
-    bySales() {
+    bySales () {
       Object.assign(
-        this.shops,
-        this.shops.sort((a, b) => {
+        this.shopsArr,
+        this.shopsArr.sort((a, b) => {
           return b.sales - a.sales
         })
       )
     },
-    byPrice(tw) {
+    byPrice (tw) {
       // 1：升序， 2：降序
       switch (tw) {
         case 1:
           Object.assign(
-            this.shops,
-            this.shops.sort((a, b) => {
+            this.shopsArr,
+            this.shopsArr.sort((a, b) => {
               return a.price - b.price
             })
           )
           break
         case 2:
           Object.assign(
-            this.shops,
-            this.shops.sort((a, b) => {
+            this.shopsArr,
+            this.shopsArr.sort((a, b) => {
               return b.price - a.price
             })
           )
@@ -161,14 +174,14 @@ export default {
   margin-top: 20px;
   width: 100%;
   &::after {
-    content: '';
+    content: "";
     display: block;
     clear: both;
     overflow: hidden;
   }
   .show {
     &::after {
-      content: '';
+      content: "";
       display: block;
       width: 100%;
       margin-top: 30px;
@@ -182,7 +195,7 @@ export default {
 
   .show ul {
     &::after {
-      content: '';
+      content: "";
       display: block;
       clear: both;
       overflow: hidden;
@@ -307,7 +320,7 @@ export default {
         }
       }
       &::after {
-        content: '';
+        content: "";
         display: block;
         clear: both;
         overflow: hidden;
@@ -319,7 +332,7 @@ export default {
           padding: 0 5px;
           float: left;
           &::after {
-            content: '';
+            content: "";
             display: block;
             clear: both;
             overflow: hidden;
@@ -403,7 +416,7 @@ export default {
             line-height: 39px;
           }
           &::after {
-            content: '';
+            content: "";
             display: block;
             clear: both;
             overflow: hidden;
@@ -432,7 +445,7 @@ export default {
                 line-height: 39px;
               }
               &::after {
-                content: '';
+                content: "";
                 display: block;
                 clear: both;
                 overflow: hidden;
@@ -477,7 +490,7 @@ export default {
         }
 
         img {
-          width: 210px;
+          width: 208px;
           height: 180px;
         }
       }
@@ -515,7 +528,15 @@ export default {
           height: 40px;
           margin-top: 5px;
           font-size: 12px;
-
+          span {
+            text-overflow: -o-ellipsis-lastline;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+          }
           &:hover {
             a {
               color: #f40;
@@ -565,7 +586,7 @@ export default {
             width: 20px;
             height: 20px;
             margin-left: 10px;
-            background: url('/image/pic5.png');
+            background: url("/image/pic5.png");
             background-position: -269px -213px;
             cursor: pointer;
           }
@@ -576,18 +597,18 @@ export default {
             margin-right: 10px;
             cursor: pointer;
             &::after {
-              content: '';
+              content: "";
               display: block;
               clear: both;
               overflow: hidden;
             }
             &.select {
-              background: url('/image/select.png');
+              background: url("/image/select.png");
               background-size: 100% 100%;
             }
 
             &.selected {
-              background: url('/image/selected.png');
+              background: url("/image/selected.png");
               background-size: 100% 100%;
             }
           }
