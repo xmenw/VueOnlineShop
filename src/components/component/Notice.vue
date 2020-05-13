@@ -81,6 +81,9 @@ export default {
   .notice-content {
     margin-top: 20px;
   }
+  .ant-list-item {
+    cursor: pointer;
+  }
   .notice-header {
     padding-bottom: 5px;
     text-align: center;
