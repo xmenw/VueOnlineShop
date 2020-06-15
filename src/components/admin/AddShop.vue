@@ -70,6 +70,8 @@
   </div>
 </template>
 <script>
+import { message } from 'ant-design-vue';
+
 export default {
   name: "AddShop",
   data () {
@@ -92,10 +94,10 @@ export default {
       this.$axios.post(`api/addShop`, param, config)
         .then((response) => {
           if (response.data > 0) {
-            alert("添加成功！");
+            message.success("添加成功！");
             this.clearForm();
           } else {
-            alert("添加失败！");
+            message.error("添加失败！");
           }
         })
         .catch((error) => {

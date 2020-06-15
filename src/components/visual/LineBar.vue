@@ -139,7 +139,7 @@ export default {
         console.log(error)
       }
       try {
-        let data = await getNameNum(context, name)
+        let data = await getNameNum(context)
         Object.values(data).forEach((data) => {
           types.push(data.id)
           dates.push(data.sales)

@@ -5,30 +5,24 @@
         <ul class="nav">
           <div class="nz-top-right">
             <div class="input">
-              <input
-                type="text"
-                class="input"
-                autocomplete="off"
-                name=" search"
-                placeholder="请输入要搜索的男装"
-                @input="searchShop"
-                @focus="isFocus = true"
-              />
+              <input type="text"
+                     class="input"
+                     autocomplete="off"
+                     name=" search"
+                     placeholder="请输入要搜索的男装"
+                     @input="searchShop"
+                     @focus="isFocus = true" />
               <button @click.prevent="search">搜索</button>
             </div>
-            <ul
-              class="result"
-              @click="ShopDetail"
-              v-show="isFocus"
-              @mouseenter="isFocus = true"
-              @mouseleave="isFocus = false"
-            >
-              <li
-                class="list"
-                v-for="list in searchShops"
-                :key="list.id"
-                :data-id="list.id"
-              >
+            <ul class="result"
+                @click="ShopDetail"
+                v-show="isFocus"
+                @mouseenter="isFocus = true"
+                @mouseleave="isFocus = false">
+              <li class="list"
+                  v-for="list in searchShops"
+                  :key="list.id"
+                  :data-id="list.id">
                 {{ list.desc }}
               </li>
             </ul>
@@ -37,27 +31,31 @@
       </div>
       <div class="nav-center">
         <div class="center-top">
-          <ul @click="select" ref="names" style="float: left">
-            <li class="active"><a href="#" class="pr">综合排序</a></li>
-            <li><a class="pr" @click="queryAllShopsBySales">销量排序</a></li>
-            <li><a class="pr" @click="queryByPrice(1)">价格升序</a></li>
-            <li><a class="pr" @click="queryByPrice(2)">价格降序</a></li>
+          <ul @click="select"
+              ref="names"
+              style="float: left">
+            <li class="active"><a href="#"
+                 class="pr">综合排序</a></li>
+            <li><a class="pr"
+                 @click="queryAllShopsBySales">销量排序</a></li>
+            <li><a class="pr"
+                 @click="queryByPrice(1)">价格升序</a></li>
+            <li><a class="pr"
+                 @click="queryByPrice(2)">价格降序</a></li>
           </ul>
-          <span class="num"
-            >共:<em>{{ len }}</em
-            >件商品</span
-          >
+          <span class="num">共:<em>{{ len }}</em>件商品</span>
         </div>
         <div class="show">
           <ul>
-            <li v-for="shop in shops" :key="shop.id">
-              <div
-                class="item"
-                :data-id="shop.id"
-                @click="$router.push('shopdetail/' + shop.id)"
-              >
+            <li v-for="shop in shops"
+                :key="shop.id">
+              <div class="item"
+                   :data-id="shop.id"
+                   @click="$router.push('shopdetail/' + shop.id)">
                 <div class="item-top">
-                  <img class="img" alt="商品图片" :src="baseUrl + shop.pic" />
+                  <img class="img"
+                       alt="商品图片"
+                       :src="baseUrl + shop.pic" />
                 </div>
                 <div class="item-bot">
                   <div class="bot1">
@@ -90,9 +88,11 @@
   </div>
 </template>
 <script>
+import { message } from 'ant-design-vue';
+
 export default {
   name: 'ShopList',
-  data() {
+  data () {
     return {
       shops: [],
       begin: 1,
@@ -103,7 +103,7 @@ export default {
     }
   },
   watch: {
-    shops() {
+    shops () {
       this.$nextTick(() => {
         let shopDomArr = document.querySelector('.show ul')
         let lastShop = shopDomArr.lastChild.childNodes[0]
@@ -117,14 +117,14 @@ export default {
                 let { data } = await this.queryShopsByPage()
                 console.log(data)
                 this.shops = this.shops.concat(data)
-                this.shops.forEach(function(shop, index) {
+                this.shops.forEach(function (shop, index) {
                   shop.select = false
                 })
                 this.$store.dispatch('arrData', data)
                 this.begin = this.begin + 1
               } catch (error) {
                 console.log(error)
-                alert('获取数据失败！')
+                message.error('获取数据失败！')
               }
             }
           })
@@ -133,7 +133,7 @@ export default {
       })
     },
   },
-  async created() {
+  async created () {
     let shops = JSON.parse(localStorage.getItem('shops'))
     if (shops && shops.length) {
       this.shops = shops
@@ -143,25 +143,25 @@ export default {
         let { data } = await this.queryShopsByPage()
         console.log(data)
         this.shops = data
-        this.shops.forEach(function(shop, index) {
+        this.shops.forEach(function (shop, index) {
           shop.select = false
         })
         this.$store.dispatch('arrData', data)
         this.begin = this.begin + 1
       } catch (error) {
         console.log(error)
-        alert('获取数据失败！')
+        message.error('获取数据失败！')
       }
     }
     this.queryShopsNum()
   },
-  mounted() {
+  mounted () {
     setTimeout(() => {
       this.statisticShopsData()
     }, 100)
   },
   methods: {
-    queryByPrice(wd) {
+    queryByPrice (wd) {
       this.$axios
         .get(`api/queryShopsByPrice?order=${wd}`)
         .then((response) => {
@@ -169,12 +169,12 @@ export default {
           this.shops = response.data
         })
         .catch((error) => {
-          alert('获取数据失败！')
+          message.error('获取数据失败！')
           console.log(error)
           throw new Error('获取数据失败!')
         })
     },
-    queryAllShopsBySales() {
+    queryAllShopsBySales () {
       this.$axios
         .get(`api/queryShopsBySales`)
         .then((response) => {
@@ -182,12 +182,12 @@ export default {
           this.shops = response.data
         })
         .catch((error) => {
-          alert('获取数据失败！')
+          message.error('获取数据失败！')
           console.log(error)
           throw new Error('获取数据失败!')
         })
     },
-    searchShop(e) {
+    searchShop (e) {
       let val = e.target.value.trim()
       if (val) {
         let shops = this.shops.filter((shop) => {
@@ -196,28 +196,28 @@ export default {
         this.searchShops = shops
       }
     },
-    ShopDetail(e) {
+    ShopDetail (e) {
       let id = e.target.getAttribute('data-id')
       if (id) {
         this.$router.push('shopdetail/' + id)
       }
     },
-    queryShopsByPage() {
+    queryShopsByPage () {
       return this.$axios.get(`api/queryShopsByPage/${this.begin}`)
     },
-    queryShopsNum() {
+    queryShopsNum () {
       this.$axios
         .get(`api/queryShopsNum`)
         .then((response) => {
           this.len = response.data
         })
         .catch((error) => {
-          alert('获取数据失败！')
+          message.error('获取数据失败！')
           console.log(error)
           throw new Error('获取数据失败!')
         })
     },
-    select(e) {
+    select (e) {
       Array.from(this.$refs.names.children).forEach((li) => {
         li.classList.remove('active')
       })
@@ -227,7 +227,7 @@ export default {
         e.target.parentNode.classList.add('active')
       }
     },
-    statisticShopsData() {
+    statisticShopsData () {
       let shops = document.querySelectorAll('.item')
       console.log(shops)
       let interse = new IntersectionObserver((entries) => {
@@ -248,7 +248,7 @@ export default {
                 })
             } catch (error) {
               console.log(error)
-              alert('获取数据失败！')
+              message.error('获取数据失败！')
             }
           }
         })
@@ -264,7 +264,7 @@ export default {
 #shopList {
   .show {
     &::after {
-      content: '';
+      content: "";
       display: inline-block;
       width: 100%;
       margin-top: 30px;
@@ -280,7 +280,7 @@ export default {
 
   .show ul {
     &::after {
-      content: '';
+      content: "";
       display: block;
       clear: both;
       overflow: hidden;
@@ -375,7 +375,7 @@ export default {
     width: 920px;
     margin: 0 auto;
     &:after {
-      content: '';
+      content: "";
       display: inline-block;
       clear: both;
     }
@@ -573,7 +573,7 @@ export default {
 
       .item-bot {
         width: 210px;
-        height: 115px;
+        height: 130px;
         border: 1px solid #f3f3f3;
 
         .bot1 {
@@ -655,7 +655,7 @@ export default {
             width: 20px;
             height: 20px;
             margin-left: 10px;
-            background: url('/image/pic5.png');
+            background: url("/image/pic5.png");
             background-position: -269px -213px;
             cursor: pointer;
           }
@@ -667,12 +667,12 @@ export default {
             cursor: pointer;
 
             &.select {
-              background: url('/image/select.png');
+              background: url("/image/select.png");
               background-size: 100% 100%;
             }
 
             &.selected {
-              background: url('/image/selected.png');
+              background: url("/image/selected.png");
               background-size: 100% 100%;
             }
           }

@@ -2,40 +2,41 @@
   <div id="regist">
     <div class="container">
       <div class="center">
-        <img src="/image/x1.png" id="img" ref="img" />
-        <form action="/api/insertUser" method="post" class="form" ref="form">
-          <input
-            type="text"
-            autofocus="autofocus"
-            name="username"
-            autocomplete="off"
-            placeholder="请输入用户名"
-            class="username input"
-            v-model="username"
-          /><br />
-          <input
-            type="password"
-            name="password"
-            placeholder="请输入密码"
-            class="password input"
-            v-model="password"
-          /><br />
-          <input
-            type="submit"
-            name="regist"
-            value="注册"
-            class="btn"
-            @click.prevent="submit"
-          />
+        <img src="/image/x1.png"
+             id="img"
+             ref="img" />
+        <form action="/api/insertUser"
+              method="post"
+              class="form"
+              ref="form">
+          <input type="text"
+                 autofocus="autofocus"
+                 name="username"
+                 autocomplete="off"
+                 placeholder="请输入用户名"
+                 class="username input"
+                 v-model="username" /><br />
+          <input type="password"
+                 name="password"
+                 placeholder="请输入密码"
+                 class="password input"
+                 v-model="password" /><br />
+          <input type="submit"
+                 name="regist"
+                 value="注册"
+                 class="btn"
+                 @click.prevent="submit" />
         </form>
       </div>
     </div>
   </div>
 </template>
 <script>
+import { message } from 'ant-design-vue';
+
 export default {
   name: 'Regist',
-  data() {
+  data () {
     return {
       username: '',
       password: '',
@@ -43,28 +44,28 @@ export default {
     }
   },
   methods: {
-    submit() {
+    submit () {
       let { username, password, regist } = this
       if (username && password) {
         if (username.length <= 10) {
-          alert('用户名不能小于10位')
+          message.warn('用户名不能小于10位')
           return
         }
         if (password.length <= 16) {
-          alert('密码不能小于16位')
+          message.warn('密码不能小于16位')
           return
         }
         if (!/[0-9a-z]+/gi.test(password)) {
-          alert('密码应包含字符和数字')
+          message.warn('密码应包含字符和数字')
           return
         }
         regist()
       } else {
-        alert('用户名或密码不能为空')
+        message.warn('用户名或密码不能为空')
         return
       }
     },
-    regist() {
+    regist () {
       let param = new URLSearchParams()
       param.append('username', this.username)
       param.append('password', this.password)
@@ -75,11 +76,11 @@ export default {
           if (this.isRegist) {
             this.$router.replace('/login')
           } else {
-            alert('您输入的用户名或密码不合法。')
+            message.error('您输入的用户名或密码不合法。')
           }
         })
         .catch((error) => {
-          alert('获取数据失败')
+          message.error('获取数据失败')
           console.log(error)
         })
     },

@@ -1,29 +1,32 @@
 <template>
   <div id="account">
-    <shop-component :shops="shops"
+    <shop-component :shops="parseBuyShops"
                     :path="path"></shop-component>
-    <button @click="settle"
-            v-show="shops.length">结账</button>
+    <a-button @click="settle"
+              v-show="parseBuyShops.length"
+              type="primary"
+              :loading="isClicked"
+              :disabled="isClicked">结账</a-button>
   </div>
 </template>
 <script>
 import ShopComponent from "./component/ShopComponent.vue";
+import { message } from 'ant-design-vue';
+import { mapGetters } from 'vuex'
+
 export default {
   name: "Account",
   data () {
     return {
-      shops: [],
-      path: ''
+      path: 'deleteVuexShops',
+      isClicked: false
     }
-  },
-  created () {
-    this.shops = JSON.parse(this.$store.state.buyShops);
-    console.log(this.shops)
   },
   methods: {
     async settle () {
       let deleteArr = []
-      this.shops.forEach((shop) => {
+      this.isClicked = true
+      this.parseBuyShops.forEach((shop) => {
         deleteArr.push(this.$axios.get(`/api/deleteById/${shop._id}`))
       })
       if (!deleteArr.length) {
@@ -31,7 +34,7 @@ export default {
       }
       await Promise.all(deleteArr)
         .then((res) => {
-          this.shops.forEach((shop) => {
+          this.parseBuyShops.forEach((shop) => {
             this.$axios(`/api/addShopsSales?id=${shop.id}&&num=${shop.count}`)
               .then((res) => {
                 console.log(res)
@@ -40,7 +43,7 @@ export default {
                 console.log(err)
               })
           })
-          this.shops.forEach((shop) => {
+          this.parseBuyShops.forEach((shop) => {
             this.$axios(`/api/updateNum?id=${shop.id}&&num=${shop.count}`)
               .then((res) => {
                 console.log(res)
@@ -51,7 +54,7 @@ export default {
           })
         })
         .catch((err) => {
-          alert('获取数据失败');
+          message.error('获取数据失败');
           console.log(err)
         })
       let shops = localStorage.getItem('buy_shops');
@@ -59,7 +62,7 @@ export default {
       if (!shops) {
         shops = []
       }
-      shops.push(...this.shops);
+      shops.push(...this.parseBuyShops);
       let axiosArr = []
       shops.forEach(({ id, username, count }) => {
         let param = new URLSearchParams();
@@ -74,13 +77,25 @@ export default {
           console.log(res);
           console.log('购买成功');
           localStorage.setItem('buy_shops', JSON.stringify(shops));
-          alert('购买成功!');
+          message.success('购买成功!');
           this.shops = []
           this.$router.replace('/infomanage/boughtShop')
         }).catch((err) => {
-          alert('获取数据失败');
+          message.error('获取数据失败');
           console.log(err);
+        }).finally(() => {
+          this.isClicked = false
         })
+    }
+  },
+  computed: {
+    ...mapGetters(['getBuyShops']),
+    parseBuyShops () {
+      try {
+        return JSON.parse(this.getBuyShops)
+      } catch (error) {
+        return []
+      }
     }
   },
   components: {
@@ -104,8 +119,11 @@ export default {
     font-size: 20px;
     color: #fff;
     cursor: pointer;
-    background-color: cadetblue;
     border-radius: 20px;
+  }
+  button[disabled="disabled"] {
+    cursor: not-allowed;
+    color: #e3e3e3;
   }
 }
 </style>

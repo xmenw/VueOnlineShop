@@ -1,26 +1,23 @@
 <template>
   <div id="shopComponent">
-    <div
-      class="shopcar-bot4"
-      style="margin-bottom:20px;"
-      v-for="(shop, i) in shops"
-      :key="i"
-    >
+    <div class="shopcar-bot4"
+         style="margin-bottom:20px;"
+         v-for="(shop, i) in shops"
+         :key="i">
       <ul class="left">
         <li>
           <div class="shop1">
-            <input
-              class="input"
-              type="checkbox"
-              name="checkbox"
-              v-model="shop.selected"
-            />
+            <input class="input"
+                   type="checkbox"
+                   name="checkbox"
+                   v-model="shop.selected" />
           </div>
         </li>
         <li>
           <router-link :to="'shopdetail/' + shop.id">
             <div class="shop2">
-              <img :src="shop.pic" style="margin-right:10px;" />
+              <img :src="shop.pic"
+                   style="margin-right:10px;" />
               <span class="shopDesc">{{ shop.desc }}</span>
             </div>
           </router-link>
@@ -37,10 +34,8 @@
           <div class="shop7">
             <ul class="ul">
               <li>
-                <a-button
-                  type="danger"
-                  @click="deleteById(shop._id || shop.id)"
-                >
+                <a-button type="danger"
+                          @click="deleteById(shop._id || shop.id)">
                   删除
                 </a-button>
               </li>
@@ -57,18 +52,14 @@
         </li>
         <li>
           <div class="shop5">
-            <span class="dis" @click="shop.count <= 1 ? 1 : shop.num--">-</span>
-            <input
-              type="text"
-              name="num"
-              style="text-align: center;"
-              v-model="shop.count"
-            />
-            <span
-              class="add"
-              @click="shop.count >= shop.num ? shop.num : shop.count++"
-              >+</span
-            >
+            <span class="dis"
+                  @click="shop.count <= 1 ? 1 : shop.num--">-</span>
+            <input type="text"
+                   name="num"
+                   style="text-align: center;"
+                   v-model="shop.count" />
+            <span class="add"
+                  @click="shop.count >= shop.num ? shop.num : shop.count++">+</span>
           </div>
         </li>
         <li>
@@ -82,13 +73,15 @@
 </template>
 <script>
 import { mapState } from 'vuex'
+import { message } from 'ant-design-vue';
+
 export default {
   name: 'ShopComponent',
   props: {
     shops: {
       type: Array,
       required: true,
-      dafault() {
+      dafault () {
         return []
       },
     },
@@ -101,27 +94,37 @@ export default {
     ...mapState(['user']),
   },
   methods: {
-    deleteById(id) {
+    deleteById (id) {
       // shopcar deleteById
       // collecte deleteCollectById
       // buy deleteBoughtById
+      // buying deleteVuexShops
+      if (this.path === 'deleteVuexShops') {
+        let shops = JSON.parse(this.$store.state.buyShops);
+        shops = shops.filter((shop) => {
+          return (shop._id || shop.id) !== id
+        })
+        this.$store.dispatch("buyShops", JSON.stringify(shops));
+        message.success('删除成功')
+        return
+      }
       this.$axios
         .get(`/api/${this.path}/${id}`)
         .then(({ data }) => {
           console.log(data)
           if (data === 1) {
-            alert('删除成功')
+            message.success('删除成功')
             this.queryShop(this.path)
           } else {
-            alert('删除失败')
+            message.error('删除失败')
           }
         })
         .catch((error) => {
-          alert('发送数据失败')
+          message.error('发送数据失败')
           console.log(error)
         })
     },
-    queryShop(path) {
+    queryShop (path) {
       switch (path) {
         case 'deleteById':
           this.queryShopCar()
@@ -136,7 +139,7 @@ export default {
           break
       }
     },
-    queryShopCar() {
+    queryShopCar () {
       this.$axios
         .get(`/api/queryPage/0/${this.user.name}`)
         .then((response) => {
@@ -149,11 +152,11 @@ export default {
           }
         })
         .catch((error) => {
-          alert('获取数据失败')
+          message.error('获取数据失败')
           console.log(error)
         })
     },
-    queryCollect(type) {
+    queryCollect (type) {
       let path = type ? 'queryAllCollect' : 'queryAllBuy'
       const name = JSON.parse(localStorage.getItem('userInfo')).name || ''
       this.$axios
@@ -169,10 +172,13 @@ export default {
           }
         })
         .catch((error) => {
-          alert('获取数据失败！')
+          message.error('获取数据失败！')
           console.log(error)
         })
     },
+    deleteVuexShops () {
+
+    }
   },
 }
 </script>

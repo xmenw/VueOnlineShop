@@ -23,7 +23,8 @@
             <li v-for="shop in shopsArr"
                 :key="shop.id">
               <div class="item">
-                <router-link :to="'shopdetail/' + shop.id">
+                <router-link :to="'shopdetail/' + shop.id"
+                             target="_blank">
                   <div class="item-top">
                     <img class="img"
                          alt="商品图片"
@@ -68,7 +69,7 @@ export default {
       baseUrl: process.env.BASE_URL,
       shopsArr: [],
       showNum: 5,
-      begin: 0,
+      begin: 1,
     }
   },
   props: {
@@ -78,10 +79,12 @@ export default {
   },
   created () {
     this.shopsArr = JSON.parse(JSON.stringify(this.shops)).slice(0, 5)
+    console.log('created', this.shopsArr)
   },
   mounted () {
     this.$nextTick(() => {
       let shopDomArr = document.querySelector('.searchShop .show ul')
+      console.log(23423, shopDomArr)
       if (!shopDomArr) {
         return
       }
@@ -89,11 +92,12 @@ export default {
       let interse = new IntersectionObserver((entries) => {
         entries.forEach(async (item) => {
           if (item.isIntersecting) {
-            if (this.begin > this.len / this.showNum + 1) {
+            if (this.begin >= this.len / this.showNum) {
               return
             }
+            console.log(23423, this.shopsArr)
             this.shopsArr = this.shopsArr.concat(
-              this.shops.slice(this.showNum * this.begin, this.showNum)
+              this.shops.slice(this.showNum * this.begin, this.showNum * (this.begin + 1))
             )
             this.shopsArr.forEach(function (shop) {
               shop.select = false
@@ -108,7 +112,7 @@ export default {
   computed: {
     ...mapState(['user', 'arrSearchShops']),
     len () {
-      return this.shopsArr && this.shopsArr.length
+      return this.shops && this.shops.length
     },
   },
   watch: {
@@ -475,7 +479,7 @@ export default {
     border: 1px solid #f6f6f6;
     .item {
       width: 210px;
-      height: 300px;
+      height: 310px;
       border: 1px solid #fff;
 
       .item-top {
@@ -497,7 +501,7 @@ export default {
 
       .item-bot {
         width: 210px;
-        height: 115px;
+        height: 130px;
         border: 1px solid #f3f3f3;
 
         .bot1 {

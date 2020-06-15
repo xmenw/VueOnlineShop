@@ -67,6 +67,8 @@
   </div>
 </template>
 <script>
+import { message } from 'ant-design-vue';
+
 export default {
   name: "UpdateShop",
   data () {
@@ -87,9 +89,9 @@ export default {
       this.$axios.post(`api/updateShop`, param, config)
         .then((response) => {
           if (response.data > 0) {
-            alert("修改成功！");
+            message.success("修改成功！");
           } else {
-            alert("修改失败！");
+            message.error("修改失败！");
           }
         })
         .catch((error) => {

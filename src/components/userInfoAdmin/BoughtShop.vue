@@ -7,6 +7,8 @@
 <script>
 import ShopComponent from '@/components/component/ShopComponent.vue'
 import { mapState } from 'vuex'
+import { message } from 'ant-design-vue';
+
 export default {
   name: "BoughtShop",
   data () {
@@ -30,7 +32,7 @@ export default {
           shops[i].selected = false;
         }
       }).catch((err) => {
-        alert('获取数据失败');
+        message.error('获取数据失败');
         console.log(err)
       })
   },

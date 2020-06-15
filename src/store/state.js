@@ -4,5 +4,6 @@ module.exports = {
   arrUser: [],
   arrSearch: [],
   arrSearchShops: [],
-  user: JSON.parse(localStorage.getItem('userInfo')) || {}
+  buyShops: [],
+  user: JSON.parse(localStorage.getItem('userInfo')) || {},
 }

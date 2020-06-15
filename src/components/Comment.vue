@@ -35,6 +35,7 @@
 </template>
 <script>
 import { mapState } from 'vuex'
+import { message } from 'ant-design-vue';
 export default {
   name: "Comment",
   data () {
@@ -62,15 +63,17 @@ export default {
       this.comment = this.comment.trim().replace(/</gi, "&lt;");
       this.comment = this.comment.trim().replace(/>/gi, "&gt;");
       if (!this.comment) {
-        alert("提交不能为空");
+        message.warn("提交不能为空");
         return;
       }
       try {
         await this.insertComment();
-        await this.queryById(this.shopId);
       } catch (error) {
         console.log(error)
       }
+      setTimeout(async () => {
+        await this.queryById(this.shopId);
+      }, 1000);
     },
     queryById (id) {
       this.$axios.get(`/api/queryComment/${id}`)
@@ -93,7 +96,7 @@ export default {
             this.comment = "";
             this.fontNum = 0;
           } else {
-            alert('提交失败');
+            message.error('提交失败');
           }
         })
         .catch((error) => {

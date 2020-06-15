@@ -41,7 +41,7 @@
           <a-input v-decorator="[
           'title',
           { rules: [{ required: true, message: '标题不能为空' },
-          { max: 50, message: '标题不能大于100个字' }] },
+          { max: 50, message: '标题不能大于50个字' }] },
         ]"
                    placeholder="请输入标题">
           </a-input>
@@ -50,7 +50,7 @@
           <a-textarea v-decorator="[
           'content',
           { rules: [{ required: true, message: '内容不能为空' },
-          { max: 100, message: '标题不能大于300个字' }] },
+          { max: 300, message: '内容不能大于300个字' }] },
         ]"
                       placeholder="请输入公告内容">
           </a-textarea>
@@ -61,6 +61,7 @@
                          :disabledDate="disabledEndDate"
                          format="YYYY-MM-DD HH:mm:ss" />
         </a-form-item>
+        {{ formateData }}
       </a-form>
     </a-modal>
   </div>
@@ -118,6 +119,7 @@ export default {
   },
   computed: {
     formateData () {
+      console.log(this.currentTime, Date.now())
       return moment(this.currentTime, 'YYYY-MM-DD HH:mm:ss')
     }
   },
@@ -173,7 +175,7 @@ export default {
       this.isAddNotice = id ? false : true
       if (id) {
         let { data } = await this.queryNoticeById(id)
-        this.currentTime = data[0].time = moment(data[0].time, 'YYYY-MM-DD HH:mm:ss')
+        this.currentTime = data[0].time = moment(this.currentTime, 'YYYY-MM-DD HH:mm:ss')
         setTimeout(() => {
           this.form.setFieldsValue(...data)
         }, 0);

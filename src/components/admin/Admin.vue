@@ -139,6 +139,8 @@ const columns = [
     scopedSlots: { customRender: 'operation' },
   },
 ]
+import { message } from 'ant-design-vue';
+
 export default {
   name: 'Admin',
   data () {
@@ -192,10 +194,10 @@ export default {
         .get(`api/delete/${id}`)
         .then((response) => {
           if (response.data > 0) {
-            alert('删除成功!')
+            message.success('删除成功!')
             this.queryAllShops()
           } else {
-            alert('删除失败!')
+            message.error('删除失败!')
           }
         })
         .catch((error) => {

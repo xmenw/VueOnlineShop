@@ -115,6 +115,8 @@
   </div>
 </template>
 <script>
+import { message } from 'ant-design-vue';
+
 export default {
   name: "ShopDetail",
   data () {
@@ -137,7 +139,7 @@ export default {
   methods: {
     insertShop () {
       if (!JSON.parse(localStorage.getItem('userInfo')).name) {
-        alert('请先登录！')
+        message.warn('请先登录！')
         this.$router.push('/login')
         return
       }
@@ -156,13 +158,13 @@ export default {
         .then((response) => {
           if (response.data > 0) {
             this.queryShop(id);
-            alert("添加成功！");
+            message.success("添加成功！");
           } else {
-            alert("添加失败!");
+            message.error("添加失败!");
           }
         })
         .catch((error) => {
-          alert("获取数据失败！");
+          message.error("获取数据失败！");
           console.log(error);
           throw new Error("获取数据失败！");
         });
@@ -173,7 +175,7 @@ export default {
           this.shop = response.data;
         })
         .catch((error) => {
-          alert("获取数据失败！");
+          message.error("获取数据失败！");
           console.log(error);
         });
     },
@@ -191,7 +193,7 @@ export default {
     },
     collectShop () {
       if (!JSON.parse(localStorage.getItem('userInfo')).name) {
-        alert('请先登录！')
+        message.warn('请先登录！')
         this.$router.push('/login')
         return
       }
@@ -203,20 +205,20 @@ export default {
       this.$axios.post(`../api/insertCollect`, param)
         .then((response) => {
           if (response.data > 0) {
-            alert("收藏成功！");
+            message.success("收藏成功！");
           } else {
-            alert("收藏失败!");
+            message.error("收藏失败!");
           }
         })
         .catch((error) => {
-          alert("获取数据失败！");
+          message.error("获取数据失败！");
           console.log(error);
           throw new Error("获取数据失败！");
         });
     },
     buyShop () {
       if (!JSON.parse(localStorage.getItem('userInfo')).name) {
-        alert('请先登录！')
+        message.warn('请先登录！')
         this.$router.push('/login')
         return
       }

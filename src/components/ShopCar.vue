@@ -18,18 +18,18 @@
           <shop-component :shops.sync="shops"
                           :path="path"></shop-component>
         </div>
-        <a-pagination
-          :total="total"
-          :defaultPageSize="pageSize"
-          :pageSizeOptions="pageSizeOptions"
-          @change="changPage"
-          showSizeChanger
-          showQuickJumper />
+        <a-pagination :total="total"
+                      :show-total="total => `总共 ${total} 个`"
+                      :defaultPageSize="pageSize"
+                      :pageSizeOptions="pageSizeOptions"
+                      @change="changPage"
+                      showQuickJumper />
 
         <div class="shopcar-bot5">
           <ul class="right">
             <li class="bill">
-              <a-button @click="account" type="primary">结算</a-button>
+              <a-button @click="account"
+                        type="primary">结算</a-button>
             </li>
             <li>合计（不含运费）<input type="text"
                      class="nu"
@@ -43,7 +43,8 @@
     </div>
     <div>
       <div class="recommend">推荐商品</div>
-      <list-component v-if="typeShops.length" :shops="typeShops"></list-component>
+      <list-component v-if="typeShops.length"
+                      :shops="typeShops"></list-component>
       <div v-else>
         <a-empty description="暂无推荐" />
       </div>
@@ -54,6 +55,8 @@
 import ShopComponent from "@/components/component/ShopComponent.vue";
 import ListComponent from './component/ListComponent'
 import { mapState } from 'vuex'
+import { message } from 'ant-design-vue';
+
 export default {
   name: 'shopCar',
   data () {
@@ -115,7 +118,7 @@ export default {
           }
         })
         .catch((error) => {
-          alert('获取数据失败')
+          message.error('获取数据失败')
           this.shops = []
           console.log(error);
         });
@@ -127,7 +130,7 @@ export default {
           this.total = this.pageCount
         })
         .catch((error) => {
-          alert('获取数据失败')
+          message.error('获取数据失败')
           console.log(error);
         });
     },
@@ -153,7 +156,7 @@ export default {
             console.log(res);
             console.log('购买成功');
           }).catch((err) => {
-            alert('获取数据失败');
+            message.error('获取数据失败');
             console.log(err);
           })
       })
@@ -189,7 +192,7 @@ export default {
         console.log(error)
       }
     },
-    changPage(num){
+    changPage (num) {
       this.queryShopByPage(num)
     },
   }
